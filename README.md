@@ -1,10 +1,6 @@
-# MindCare 🧠 — Your Personal Mental Health Companion
+# MindCare  — Your Personal Mental Health Companion
 
 MindCare is a full-stack web application that uses machine learning to help users understand and track their **stress**, **anxiety**, and **depression** risk. It combines validated psychological screening tools (PSS-10, GAD-7, PHQ-9) with XGBoost models trained on lifestyle and physiological data, then explains every prediction with SHAP so users can see *why* the model reached its conclusion — not just the result.
-
-> ⚠️ **Disclaimer**: MindCare is an educational/wellness tool, not a diagnostic or clinical instrument. It is not a substitute for professional medical or psychological advice. Users experiencing a mental health crisis should contact a licensed professional or a crisis helpline.
-
----
 
 ## 📸 Screenshots
 
@@ -32,7 +28,7 @@ Below is a real sample output from the model's SHAP explainability engine (gener
 
 ---
 
-## ✨ Features
+##  Features
 
 - **Three independent risk assessments**
   - **Stress** — lifestyle/physiological inputs + the **PSS-10** (Perceived Stress Scale) questionnaire
@@ -49,7 +45,7 @@ Below is a real sample output from the model's SHAP explainability engine (gener
 
 ---
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 **Backend**
 - [Flask](https://flask.palletsprojects.com/) (REST API)
@@ -59,7 +55,6 @@ Below is a real sample output from the model's SHAP explainability engine (gener
 - [SHAP](https://shap.readthedocs.io/) for model explainability
 - [Hugging Face Transformers](https://huggingface.co/docs/transformers) for report summarization
 - [scikit-learn](https://scikit-learn.org/), [pandas](https://pandas.pydata.org/), [NumPy](https://numpy.org/) for data processing
-- [Gunicorn](https://gunicorn.org/) for production serving
 
 **Frontend**
 - HTML5, CSS3, and vanilla JavaScript (served as static files by Flask)
@@ -69,9 +64,8 @@ Below is a real sample output from the model's SHAP explainability engine (gener
 - Pre-trained model artifacts stored under `saved_models/` and `saved_models_depression/`
 
 ---
----
 
-## ⚙️ Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -124,4 +118,4 @@ python import_depression.py
 python app.py
 ```
 
-On startup, the app automatically trains and loads the stress, anxiety, and depression models from the data in your database. Once ready, open:
+On startup, the app automatically trains and loads the stress, anxiety, and depression models from the data in your database. Once ready, open: http://localhost:5000
