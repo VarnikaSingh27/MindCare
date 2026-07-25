@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare - Depression Assessment</title>
+    <meta name="description" content="A gentle, supportive space for depression self-assessment">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favi.ico">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 210 40% 98%;
+            --foreground: 215 25% 27%;
+            --primary: 210 80% 48%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 200 70% 92%;
+            --muted-foreground: 215 16% 47%;
+            --border: 210 30% 88%;
+            --calm-blue-light: 210 70% 85%;
+            --calm-peach: 20 90% 85%;
+            --calm-purple: 250 60% 70%;
+            --glass-bg: hsla(0, 0%, 100%, 0.7);
+            --glass-border: hsla(210, 30%, 88%, 0.3);
+        }
+
+        body {
+            font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, hsl(var(--calm-blue-light)) 0%, hsl(var(--background)) 50%, hsl(var(--calm-peach)) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            color: hsl(var(--foreground));
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-decoration-1 {
+            top: 5rem;
+            left: 5rem;
+            width: 16rem;
+            height: 16rem;
+            background: hsla(210, 80%, 48%, 0.05);
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .bg-decoration-2 {
+            bottom: 5rem;
+            right: 5rem;
+            width: 24rem;
+            height: 24rem;
+            background: hsla(250, 60%, 70%, 0.1);
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 42rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .progress-text {
+            color: hsla(215, 25%, 27%, 0.7);
+        }
+
+        .progress-percent {
+            color: hsl(var(--primary));
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 0.5rem;
+            background: hsl(var(--secondary));
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: hsl(var(--primary));
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px -10px hsla(210, 80%, 48%, 0.15);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.animating {
+            opacity: 0;
+            transform: scale(0.98);
+        }
+
+        .question-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .question-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+            color: hsl(var(--foreground));
+        }
+
+        .question-description {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 36rem;
+            margin: 0 auto;
+        }
+
+        .input-container {
+            padding: 1rem 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.25rem;
+            text-align: center;
+            border: 1px solid hsla(210, 80%, 48%, 0.2);
+            border-radius: 0.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: hsl(var(--foreground));
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 2px hsla(210, 80%, 48%, 0.1);
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1.125rem;
+            border: 1px solid hsla(210, 80%, 48%, 0.2);
+            border-radius: 0.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .select-field:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 2px hsla(210, 80%, 48%, 0.1);
+        }
+
+        .slider-container {
+            width: 100%;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0 0.25rem;
+        }
+
+        .slider-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: hsl(var(--primary));
+        }
+
+        .slider-min, .slider-max {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .slider-input {
+            width: 100%;
+            height: 0.5rem;
+            -webkit-appearance: none;
+            appearance: none;
+            background: hsl(var(--secondary));
+            border-radius: 9999px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            background: hsl(var(--primary));
+            border: 2px solid hsl(var(--background));
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .slider-input::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .slider-input::-moz-range-thumb {
+            width: 1.25rem;
+            height: 1.25rem;
+            background: hsl(var(--primary));
+            border: 2px solid hsl(var(--background));
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .slider-input::-moz-range-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .yesno-group {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .yesno-btn {
+            min-width: 120px;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+            border: 2px solid hsla(210, 80%, 48%, 0.2);
+            border-radius: 0.75rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .yesno-btn:hover {
+            border-color: hsla(210, 80%, 48%, 0.4);
+            background: hsla(210, 80%, 48%, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .yesno-btn.selected {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+        }
+
+        .phq9-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .phq9-option {
+            width: 100%;
+        }
+
+        .phq9-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .phq9-label {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border: 2px solid hsla(210, 80%, 48%, 0.2);
+            border-radius: 0.75rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .phq9-label:hover {
+            border-color: hsla(210, 80%, 48%, 0.4);
+            background: hsla(210, 80%, 48%, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px -2px hsla(210, 80%, 48%, 0.15);
+        }
+
+        .phq9-input:checked + .phq9-label {
+            border-color: hsl(var(--primary));
+            background: hsla(210, 80%, 48%, 0.1);
+            box-shadow: 0 4px 16px -4px hsla(210, 80%, 48%, 0.3);
+        }
+
+        .phq9-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2rem;
+            height: 2rem;
+            background: hsl(var(--secondary));
+            color: hsl(var(--primary));
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .phq9-input:checked + .phq9-label .phq9-score {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .phq9-text {
+            flex: 1;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Nunito', sans-serif;
+            border: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid hsla(210, 80%, 48%, 0.2);
+            color: hsl(var(--foreground));
+        }
+
+        .btn-back:hover:not(:disabled) {
+            border-color: hsla(210, 80%, 48%, 0.4);
+        }
+
+        .btn-next {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: hsla(210, 80%, 48%, 0.9);
+        }
+
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .transition-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--calm-purple)));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px hsla(210, 80%, 48%, 0.3);
+        }
+        .loader-hourglass {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(0,0,0,0.15);
+    border-top-color: hsl(var(--primary));
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 2rem;
+            }
+
+            .question-title {
+                font-size: 1.5rem;
+            }
+
+            .question-description {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<div id="loading-overlay"
+     style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(6px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+     ">
+     
+    <div style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
+        
+        <!-- 🔹 ANIMATED HOURGLASS -->
+        <div class="loader-hourglass"></div>
+
+        <div style="
+            background: white;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+            text-align:center;
+        ">
+            Analyzing your results... please wait 💙
+        </div>
+
+    </div>
+</div>
+
+<body>
+    <div class="bg-decoration bg-decoration-1"></div>
+    <div class="bg-decoration bg-decoration-2"></div>
+
+    <div class="container" id="question-container">
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-text" id="progress-text">Question 1 of 23</span>
+                <span class="progress-percent" id="progress-percent">4%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar" style="width: 4%"></div>
+            </div>
+        </div>
+
+        <div class="card" id="flash-card">
+            <div class="question-header">
+                <h2 class="question-title" id="question-title">Loading...</h2>
+                <p class="question-description" id="question-description">Please wait...</p>
+            </div>
+
+            <div class="input-container" id="input-container">
+                <!-- Dynamic input will be inserted here -->
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="btn btn-back" id="btn-back" onclick="handleBack()" disabled>
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back
+            </button>
+
+            <button class="btn btn-next" id="btn-next" onclick="handleNext()" disabled>
+                <span id="btn-text">Next</span>
+                <svg class="icon" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="depression-result" 
+        style="margin-top: 2rem; padding: 2rem; background: white; border-radius: 1rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: none;">
+        <br>
+        <h3 style="margin-top:25px;">Top Factors Impacting Prediction</h3>
+        <div id="shap-chart-depression" style="width:100%; height:500px; margin-top:20px;"></div>
+        <div id="shap-advice-depression" style="margin-top:15px; font-size:1.1rem; font-weight:bold;"></div>
+        <!-- Go to Dashboard Button -->
+        <div style="text-align:center; margin-top: 2rem;">
+            <button 
+                onclick="goToDashboard()" 
+                style="
+                    padding: 12px 22px;
+                    border-radius: 14px;
+                    border: none;
+                    background: hsl(var(--primary));
+                    color: white;
+                    font-weight: 700;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    transition: 0.25s;
+                "
+                onmouseover="this.style.background='hsla(210,80%,48%,0.85)'"
+                onmouseout="this.style.background='hsl(var(--primary))'"
+            >
+                Go to Dashboard →
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function goToDashboard() {
+            window.location.href = "/static/dashboard.html";
+        }
+        const questions = [
+            {
+                id: "intro",
+                q: "Let's start with some basic questions about you",
+                d: "These initial questions help us understand your background and lifestyle. This information provides important context for your assessment.",
+                type: "transition",
+            },
+            {
+                id: "age",
+                q: "How old are you?",
+                d: "Understanding your age helps us provide age-appropriate support and context for your experience.",
+                type: "number",
+                min: 18,
+                max: 80,
+            },
+            {
+                id: "gender",
+                q: "How do you identify?",
+                d: "This helps us understand your unique perspective and lived experiences.",
+                type: "select",
+                options: ["Male", "Female", "Other"],
+            },
+            {
+                id: "sleep_hours",
+                q: "How many hours do you typically sleep each night?",
+                d: "Sleep quality is deeply connected to emotional regulation and mental health.",
+                type: "slider",
+                min: 2,
+                max: 12,
+                unit: "hours",
+            },
+            {
+                id: "social_support",
+                q: "On a scale of 1-10, how would you rate your social support?",
+                d: "Strong social connections play a vital role in emotional well-being and resilience.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "anxiety_score",
+                q: "On a scale of 1-20, how would you rate your anxiety level?",
+                d: "Anxiety and depression often occur together, influencing each other significantly.",
+                type: "slider",
+                min: 1,
+                max: 20,
+            },
+            {
+                id: "stress_level",
+                q: "On a scale of 1-10, how would you rate your current stress level?",
+                d: "Understanding your stress helps us see how you're managing day-to-day challenges right now.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "financial_stress",
+                q: "On a scale of 1-10, how much financial stress are you experiencing?",
+                d: "Financial concerns can significantly impact mental health and overall well-being.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "work_stress",
+                q: "On a scale of 1-10, how would you rate your work-related stress?",
+                d: "Work environment and pressures can deeply influence your emotional state.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "self_esteem",
+                q: "On a scale of 1-10, how would you rate your self-esteem?",
+                d: "How we view ourselves plays a crucial role in mental health and happiness.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "life_satisfaction",
+                q: "On a scale of 1-10, how satisfied are you with your life overall?",
+                d: "Life satisfaction reflects your overall sense of fulfillment and contentment.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "loneliness",
+                q: "On a scale of 1-10, how often do you feel lonely?",
+                d: "Loneliness can deeply affect mental health, even when surrounded by others.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "family_history",
+                q: "Do you have a family history of mental illness?",
+                d: "Family history can provide valuable insight into your own mental health journey and patterns.",
+                type: "yesno",
+            },
+            {
+                id: "substance_use",
+                q: "How would you describe your substance use?",
+                d: "Substance use can influence mood, behavior, and overall mental health.",
+                type: "select",
+                options: ["None", "Occasional", "Frequent"],
+            },
+            {
+                id: "transition_phq",
+                q: "Moving to the next stage: PHQ-9 Assessment",
+                d: "Now we'll explore your recent depression symptoms with a series of clinical questions. This standardized assessment helps us better understand your experience over the past two weeks.",
+                type: "transition",
+            },
+            {
+                id: "phq1",
+                q: "Little interest or pleasure in doing things",
+                d: "Loss of interest in activities you once enjoyed can be a key indicator of depression.",
+                type: "phq9",
+            },
+            {
+                id: "phq2",
+                q: "Feeling down, depressed, or hopeless",
+                d: "These persistent feelings are common in depression and deserve compassionate attention.",
+                type: "phq9",
+            },
+            {
+                id: "phq3",
+                q: "Trouble falling or staying asleep, or sleeping too much",
+                d: "Sleep disturbances are closely linked to mood and emotional regulation.",
+                type: "phq9",
+            },
+            {
+                id: "phq4",
+                q: "Feeling tired or having little energy",
+                d: "Fatigue and low energy are often overlooked but important symptoms of depression.",
+                type: "phq9",
+            },
+            {
+                id: "phq5",
+                q: "Poor appetite or overeating",
+                d: "Changes in eating patterns can reflect emotional distress and need attention.",
+                type: "phq9",
+            },
+            {
+                id: "phq6",
+                q: "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
+                d: "Self-critical thoughts are common in depression but don't reflect your true worth.",
+                type: "phq9",
+            },
+            {
+                id: "phq7",
+                q: "Trouble concentrating on things, such as reading the newspaper or watching television",
+                d: "Difficulty focusing is a valid symptom that affects daily functioning.",
+                type: "phq9",
+            },
+            {
+                id: "phq8",
+                q: "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual",
+                d: "Physical manifestations of depression are real and deserve recognition.",
+                type: "phq9",
+            },
+            {
+                id: "phq9",
+                q: "Thoughts that you would be better off dead or of hurting yourself in some way",
+                d: "If you're experiencing these thoughts, please reach out for immediate support. You are not alone.",
+                type: "phq9",
+            },
+        ];
+
+        let currentIndex = 0;
+        let answers = {};
+        let isAnimating = false;
+
+        function renderQuestion() {
+            const question = questions[currentIndex];
+            
+            document.getElementById('question-title').textContent = question.q;
+            document.getElementById('question-description').textContent = question.d;
+            
+            updateProgress();
+            renderInput(question);
+            updateButtons();
+        }
+
+        function renderInput(question) {
+            const container = document.getElementById('input-container');
+            const value = answers[question.id];
+            let html = '';
+
+            switch (question.type) {
+                case 'transition':
+                    html = `
+                        <div style="text-align: center; padding: 2rem 0;">
+                            <div class="transition-icon">
+                                <svg style="width: 40px; height: 40px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <p style="color: hsl(var(--primary)); font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Ready to continue?</p>
+                            <p style="color: hsl(var(--muted-foreground)); font-size: 0.95rem;">Click Next when you're ready to proceed</p>
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    // Auto-mark transition as viewed
+                    answers[question.id] = 'viewed';
+                    break;
+                
+                case 'yesno':
+                    html = `
+                        <div class="yesno-group">
+                            <button class="yesno-btn ${value === 'Yes' ? 'selected' : ''}" onclick="handleYesNo('Yes')">Yes</button>
+                            <button class="yesno-btn ${value === 'No' ? 'selected' : ''}" onclick="handleYesNo('No')">No</button>
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+
+                case 'select':
+                    html = `
+                        <select class="select-field" onchange="updateAnswer(this.value)">
+                            <option value="">Select an option...</option>
+                            ${question.options.map(opt => 
+                                `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`
+                            ).join('')}
+                        </select>
+                    `;
+                    container.innerHTML = html;
+                    break;
+
+                case 'slider':
+                    const sliderValue = value !== undefined ? value : question.min;
+                    html = `
+                        <div class="slider-container">
+                            <div class="slider-labels">
+                                <span class="slider-min">${question.min}</span>
+                                <span class="slider-value" id="slider-value">${sliderValue}${question.unit ? ' ' + question.unit : ''}</span>
+                                <span class="slider-max">${question.max}</span>
+                            </div>
+                            <input type="range" class="slider-input" 
+                                min="${question.min}" 
+                                max="${question.max}" 
+                                value="${sliderValue}"
+                                step="1"
+                                oninput="updateSliderValue(this.value, '${question.unit || ''}')"
+                                onchange="updateAnswer(parseInt(this.value))">
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    if (value === undefined) updateAnswer(sliderValue);
+                    break;
+
+                case 'number':
+                    html = `
+                        <div style="width: 100%;">
+                            <input type="number" class="input-field" 
+                                placeholder="Enter a number..." 
+                                min="${question.min || ''}" 
+                                max="${question.max || ''}"
+                                value="${value || ''}"
+                                oninput="updateAnswer(this.value ? parseInt(this.value) : undefined)">
+                            ${question.unit ? `<p style="text-align: center; margin-top: 0.5rem; font-size: 0.875rem; color: hsl(var(--muted-foreground));">${question.unit}</p>` : ''}
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+
+                case 'phq9':
+                    const phq9Options = [
+                        { value: 0, label: 'Not at all' },
+                        { value: 1, label: 'Several days' },
+                        { value: 2, label: 'More than half the days' },
+                        { value: 3, label: 'Nearly every day' }
+                    ];
+                    html = `
+                        <div class="phq9-group">
+                            ${phq9Options.map((opt, idx) => `
+                                <div class="phq9-option">
+                                    <input type="radio" id="phq9_${idx}" name="phq9" value="${opt.value}" class="phq9-input" 
+                                        ${value === opt.value ? 'checked' : ''} onchange="updateAnswer(${opt.value})">
+                                    <label for="phq9_${idx}" class="phq9-label">
+                                        <span class="phq9-score">${opt.value}</span>
+                                        <span class="phq9-text">${opt.label}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+            }
+        }
+
+        function updateSliderValue(value, unit) {
+            document.getElementById('slider-value').textContent = value + (unit ? ' ' + unit : '');
+        }
+
+        function handleYesNo(value) {
+            updateAnswer(value);
+            const buttons = document.querySelectorAll('.yesno-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === value) {
+                    btn.classList.add('selected');
+                }
+            });
+        }
+
+        function updateAnswer(value) {
+            const question = questions[currentIndex];
+            answers[question.id] = value;
+            updateButtons();
+        }
+
+        function updateProgress() {
+            const progress = ((currentIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-text').textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+            document.getElementById('progress-percent').textContent = `${Math.round(progress)}%`;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function updateButtons() {
+            const question = questions[currentIndex];
+            const hasAnswer = answers[question.id] !== undefined && answers[question.id] !== '';
+            const isLastQuestion = currentIndex === questions.length - 1;
+
+            document.getElementById('btn-back').disabled = currentIndex === 0 || isAnimating;
+            document.getElementById('btn-next').disabled = !hasAnswer || isAnimating;
+
+            if (isLastQuestion) {
+                document.getElementById('btn-text').textContent = 'Complete';
+                document.getElementById('btn-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+            } else {
+                document.getElementById('btn-text').textContent = 'Next';
+                document.getElementById('btn-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>';
+            }
+        }
+
+        function handleNext() {
+    if (isAnimating) return;
+
+    const isLast = currentIndex === questions.length - 1;
+
+    if (isLast) {
+        // Hide questions & show loader
+        document.querySelector(".container").style.display = "none";
+        document.getElementById("loading-overlay").style.display = "flex";
+
+        // Now call submission
+        submitAssessment();
+        return;
+    }
+
+    // Normal question flow
+    animateTransition(() => {
+        currentIndex++;
+        renderQuestion();
+    });
+}
+        function handleBack() {
+            if (currentIndex > 0 && !isAnimating) {
+                animateTransition(() => {
+                    currentIndex--;
+                    renderQuestion();
+                });
+            }
+        }
+
+        function animateTransition(callback) {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            const card = document.getElementById('flash-card');
+            card.classList.add('animating');
+            
+            setTimeout(() => {
+                callback();
+                card.classList.remove('animating');
+                isAnimating = false;
+            }, 200);
+        }
+        async function submitAssessment() {
+            const user = JSON.parse(localStorage.getItem("mindcareUser"));
+    const payload = {
+        email: user.email,
+        user_id: user.user_id,
+        ml_features: {
+            Age: answers.age,
+            Gender: answers.gender,
+            Sleep_Hours: answers.sleep_hours,
+            Social_Support_Score: answers.social_support,
+            Anxiety_Score: answers.anxiety_score,
+            Stress_Level: answers.stress_level,
+            Financial_Stress: answers.financial_stress,
+            Work_Stress: answers.work_stress,
+            Self_Esteem_Score: answers.self_esteem,
+            Life_Satisfaction_Score: answers.life_satisfaction,
+            Loneliness_Score: answers.loneliness,
+            Family_History_Mental_Illness: answers.family_history,
+            Substance_Use: answers.substance_use
+        },
+        phq_answers: [
+            answers.phq1, answers.phq2, answers.phq3, answers.phq4,
+            answers.phq5, answers.phq6, answers.phq7, answers.phq8, answers.phq9
+        ]
+    };
+
+    // hide questions + show loader
+    document.querySelector(".container").style.display = "none";
+    document.getElementById("loading-overlay").style.display = "flex";
+
+    try {
+        const resp = await fetch("/api/depression/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+        if (data.error) {
+            alert("Error: " + data.error);
+            return;
+        }
+
+        // hide loader
+        document.getElementById("loading-overlay").style.display = "none";
+
+        // show results
+        const resultDiv = document.getElementById("depression-result");
+        resultDiv.style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // Fill results
+        resultDiv.innerHTML = `
+            <h3>Depression Level: ${data.prediction}</h3>
+            <p>PHQ-9 Score: ${data.phq_total} (${data.phq_level})</p>
+            <p><strong>Summary:</strong> ${data.summary_report}</p>
+
+            <h4>Top Factors:</h4>
+            <ul>
+                ${(data.shap_top_features || [])
+                    .map(f => `<li>${f.feature}: ${f.value.toFixed(2)}</li>`)
+                    .join("")}
+            </ul>
+            <h3 style="margin-top:25px;">Top Factors Impacting Prediction</h3>
+            <div id="shap-chart-depression" style="width:100%; height:500px; margin-top:20px;"></div>
+            <div id="shap-advice-depression" style="margin-top:15px; font-size:1.1rem; font-weight:bold;"></div>
+
+            <button onclick="window.location.href='/static/dashboard.html'"
+                    style="margin-top:20px; padding:10px 20px; background:#2a4d9c; color:white; border:none; border-radius:8px;">
+                    Go to Dashboard
+            </button>
+        `;
+
+        // SHAP plot
+        if (data.shap_interactive) {
+            const shapJSON =
+                typeof data.shap_interactive === "string"
+                    ? JSON.parse(data.shap_interactive)
+                    : data.shap_interactive;
+
+            Plotly.newPlot("shap-chart-depression", shapJSON);
+
+            document
+                .getElementById("shap-chart-depression")
+                ?.on("plotly_click", function (event) {
+                    const impact = event.points[0].x;
+                    const feature = event.points[0].y;
+
+                    document.getElementById("shap-advice-depression").innerHTML = `
+                        • <b>${feature}</b> pushes 
+                        <b>${impact > 0 ? "towards" : "away from"}</b> the predicted depression level.
+                    `;
+                });
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Server error, check console.");
+    }
+}
+        // Initialize
+        renderQuestion();
+    </script>
+</body>
+</html>

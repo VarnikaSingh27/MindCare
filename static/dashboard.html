@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MindCare | Dashboard</title>
+<link rel="icon" type="image/x-icon" href="favi.ico">
+
+<!-- AOS Animations -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+<style>
+ @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Fredericka+the+Great&display=swap');
+/* =======================================
+   GLOBAL RESET
+======================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* GLOBAL TEXT SPACING */
+h1, h2, h3, h4, h5, h6, p {
+  margin: 12px 0 !important;   /* universal spacing */
+  line-height: 1.45;           /* smoother readability */
+}
+
+/* SPACING IN HEADER SECTION */
+.welcome-title {
+  margin-top: 18px !important;
+  margin-bottom: 8px !important;
+}
+
+.welcome-subtitle {
+  margin-bottom: 22px !important;
+}
+
+.quote-text {
+  margin-top: 10px !important;
+  margin-bottom: 20px !important;
+}
+
+/* SPACING BETWEEN SECTIONS */
+.section-title {
+  margin-top: 40px !important;
+  margin-bottom: 20px !important;
+}
+
+/* FEATURE CARD TEXT SPACING */
+.feature-card h3 {
+  margin-top: 15px !important;
+  margin-bottom: 8px !important;
+}
+
+.feature-card p {
+  margin-top: 0;
+  margin-bottom: 10px !important;
+  line-height: 1.5;
+}
+
+
+body {
+  font-family: 'Comfortaa', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  color: #fff;
+
+  /* EXACT background from index.html */
+  background: linear-gradient(120deg, #305497, #2a5298);
+  background-size: 200% 200%;
+  animation: gradientFlow 15s ease infinite;
+}
+
+/* Gradient motion (same as index.html) */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Background image EXACT as index.html */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("pic20.jpeg") no-repeat center center/cover;
+  opacity: 0.35;
+  z-index: 0;
+}
+
+/* =======================================
+   FLOATING BUBBLES
+======================================= */
+@keyframes bubbleRise {
+  0% { transform: translateY(0) scale(1); opacity: 0.28; }
+  100% { transform: translateY(-1300px) scale(1.5); opacity: 0; }
+}
+
+.bubble {
+  position: fixed;
+  bottom: -140px;
+  background: rgba(255,255,255,0.20);
+  border-radius: 50%;
+  filter: blur(1.5px);
+  animation: bubbleRise linear infinite;
+  z-index: 2;  /* Above background, below content */
+}
+
+/* 12 floating bubbles, varied sizes */
+.bubble:nth-child(1){width:80px;height:80px;left:7%;animation-duration:15s;}
+.bubble:nth-child(2){width:50px;height:50px;left:20%;animation-duration:18s;}
+.bubble:nth-child(3){width:95px;height:95px;left:33%;animation-duration:22s;}
+.bubble:nth-child(4){width:60px;height:60px;left:47%;animation-duration:20s;}
+.bubble:nth-child(5){width:40px;height:40px;left:59%;animation-duration:25s;}
+.bubble:nth-child(6){width:100px;height:100px;left:72%;animation-duration:18s;}
+.bubble:nth-child(7){width:55px;height:55px;left:82%;animation-duration:23s;}
+.bubble:nth-child(8){width:85px;height:85px;left:12%;animation-duration:19s;}
+.bubble:nth-child(9){width:70px;height:70px;left:28%;animation-duration:21s;}
+.bubble:nth-child(10){width:92px;height:92px;left:51%;animation-duration:24s;}
+.bubble:nth-child(11){width:45px;height:45px;left:66%;animation-duration:17s;}
+.bubble:nth-child(12){width:105px;height:105px;left:84%;animation-duration:26s;}
+
+/* =======================================
+   TOP BAR
+======================================= */
+.topbar {
+  width: 92%;
+  max-width: 1300px;
+  margin: 28px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+/* ================================
+   FIRE STREAK ICON
+================================ */
+.streak-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+#streakFire {
+  font-size: 24px;
+  user-select: none;
+  transition: 0.2s ease;
+}
+
+#streakFire:hover {
+  transform: scale(1.18);
+}
+
+/* Tooltip */
+.streak-tooltip {
+  position: absolute;
+  top: -38px;
+  left: -14px;
+  padding: 6px 12px;
+  font-size: 14px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  color: #fff;
+  opacity: 0;
+  border: 1px solid rgba(255,255,255,0.35);
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
+}
+
+.streak-container:hover .streak-tooltip {
+  opacity: 1;
+}
+
+
+.logo {
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.profile-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.profile-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #1a2333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.logout {
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dots {
+  font-size: 28px;
+  cursor: pointer;
+  opacity: 0.95;
+  transition: 0.2s;
+}
+
+.dots:hover {
+  opacity: 1;
+}
+
+/* =======================================
+   AFFIRMATION
+======================================= */
+.center-affirm {
+  width: 100%;
+  text-align: center;
+  margin-top: 22px;
+  font-style: italic;
+  font-size: 1.25rem;
+  opacity: 0;
+  animation: fadeAffirm 1.5s forwards;
+}
+
+@keyframes fadeAffirm {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =======================================
+   HERO SECTION
+======================================= */
+.hero {
+  margin-top: 18px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+/* Fix favicon size next to MindCare */
+.logo-icon {
+  width: 42px;     /* nicely balanced */
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-block;
+}
+
+/* Keep MindCare + icon aligned in one row */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.hero p {
+  opacity: 0.95;
+  font-size: 1.1rem;
+}
+
+/* =======================================
+   QUESTION HEADING
+======================================= */
+.question-title {
+  width: 92%;
+  max-width: 1300px;
+  margin: 46px auto 18px;
+  font-size: 1.32rem;
+  font-weight: 900;
+  color: #fff;
+  z-index: 10;
+  position: relative;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- FLOATING BUBBLES -->
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+
+  <!-- LEFT: Logo -->
+  <div class="logo">
+      <img src="favi.ico" alt="logo" class="logo-icon">
+      <span class="logo-text">MindCare</span>
+  </div>
+
+  <!-- RIGHT: Profile + Logout + Settings -->
+  <div class="profile-box">
+
+      <!-- 🔥 Streak -->
+      <div class="streak-container">
+          <span id="streakFire">🔥</span>
+          <div id="streakTooltip" class="streak-tooltip">0-day streak</div>
+      </div>
+
+      <!-- Profile icon -->
+      <div id="profileIcon" class="profile-icon" onclick="window.location='profile.html'">Y</div>
+
+      <!-- Logout -->
+      <a id="logoutBtn" class="logout">Logout</a>
+
+      <!-- 3 dots -->
+      <div id="openPanel" class="dots">⋯</div>
+
+  </div>
+
+</div>
+
+<!-- AFFIRMATION -->
+<div class="center-affirm" id="affirmationCenter"></div>
+
+<!-- HERO -->
+<div class="hero" data-aos="fade-up">
+  <h1 id="welcomeUser">Welcome back!</h1>
+  <p>Your personalized mental wellness check-in begins here.</p>
+</div>
+
+<!-- QUESTION -->
+<div class="question-title">What would you like to analyze today?</div>
+<!-- =======================================
+     ASSESSMENT CARDS GRID
+======================================= -->
+<style>
+
+.assessment-area {
+  width: 92%;
+  max-width: 1300px;
+  margin: 10px auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  position: relative;
+  z-index: 10;
+}
+
+.card {
+  padding: 28px 20px;
+  text-align: center;
+  background: rgba(255,255,255,0.23);
+  border-radius: 22px;
+  backdrop-filter: blur(22px);
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  background: rgba(255,255,255,0.32);
+}
+
+.card-emoji {
+  font-size: 2.7rem;
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  font-size: 1.7rem;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* =======================================
+     WELLNESS TOOLS BUTTON (FIXED)
+======================================= */
+.tools-toggle-d {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.95);
+  color: #1a2333;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+  z-index: 1500;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+/* =======================================
+     WELLNESS TOOLS PANEL (DOWNWARD OPEN)
+======================================= */
+.tools-panel {
+  position: fixed;
+  right: 30px;
+  bottom: 80px;
+  width: 330px;
+  max-height: 72vh;
+  background: rgba(255,255,255,0.26);
+  border-radius: 22px;
+  padding: 22px;
+  backdrop-filter: blur(25px);
+  overflow-y: auto;
+  transform: translateY(25px);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s ease;
+  z-index: 1400;
+}
+
+.tools-panel.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Tools sections */
+.tools-section {
+  background: rgba(255,255,255,0.25);
+  padding: 14px;
+  border-radius: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 5px 16px rgba(0,0,0,0.28);
+}
+
+.tools-section h3 {
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+/* Mood tracker */
+.mood-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mood-btn {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.88);
+  border: none;
+  color: #1a2333;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* Notes input */
+.journal-input {
+  width: 100%;
+  min-height: 60px;
+  border-radius: 12px;
+  border: none;
+  padding: 8px;
+  background: rgba(255,255,255,0.92);
+  color: #1a2333;
+  resize: vertical;
+}
+
+.journal-save {
+  margin-top: 8px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 999px;
+  border: none;
+  background: #b5d1ff;
+  font-weight: 800;
+  color: #1a2333;
+  cursor: pointer;
+}
+
+.clear-notes-btn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 999px;
+  border: none;
+  background: #ff6b6b;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+}
+
+.notes-list {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.journal-note {
+  background: rgba(255,255,255,0.3);
+  padding: 8px 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  color: #1a2333;
+}
+
+.delete-note {
+  cursor: pointer;
+  font-weight: 900;
+  color: #d00000;
+}
+
+/* Flashcards */
+.flashcard {
+  width: 100%;
+  height: 120px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.9);
+  color: #1a2333;
+  cursor: pointer;
+  perspective: 1000px;
+}
+
+.flashcard-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  backface-visibility: hidden;
+  padding: 14px;
+  text-align: center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+.flashcard-controls {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.flashcard-controls button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  cursor: pointer;
+}
+
+
+/* =======================================
+     SIDE PANEL (3 DOTS)
+======================================= */
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: -360px;
+  width: 330px;
+  height: 100vh;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(22px);
+  padding: 30px;
+  transition: 0.35s;
+  z-index: 1600;
+  color: #1a2333;
+}
+
+/* Improved Mood Chips */
+.mood-buttons.improved .mood-btn {
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  padding: 10px;
+  color: #1a2333;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+
+.mood-great { background: #b0f4c9; }
+.mood-good { background: #d4f0ff; }
+.mood-okay { background: #ffe6b3; }
+.mood-low { background: #ffb3b3; }
+.mood-verylow { background: #e89cff; }
+
+
+.side-panel.open {
+  right: 0;
+}
+
+
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.panel-dots {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,0.25);
+}
+
+.history-filters {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.history-filter {
+  flex: 1;
+  padding: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.85);
+  border: none;
+  color: #1a2333;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.history-filter.active {
+  background: #2a5298;
+  color: #fff;
+}
+
+.clear-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  background: #ff6b6b;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.history-entry {
+  margin-top: 10px;
+  background: rgba(255,255,255,0.35);
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+
+</style>
+
+
+<!-- =======================================
+        ASSESSMENT CARDS
+======================================= -->
+<div class="assessment-area">
+
+  <div class="card" onclick="window.location.href='stress.html'">
+    <div class="card-emoji">😟</div>
+    <h3>Stress</h3>
+    <p>Check your stress levels today.</p>
+  </div>
+
+  <div class="card" onclick="window.location.href='anxiety.html'">
+    <div class="card-emoji">😥</div>
+    <h3>Anxiety</h3>
+    <p>Understand your level of worry.</p>
+  </div>
+
+  <div class="card" onclick="window.location.href='depression.html'">
+    <div class="card-emoji">😔</div>
+    <h3>Depression</h3>
+    <p>Reflect on your emotional state.</p>
+  </div>
+
+</div>
+
+
+<!-- =======================================
+        WELLNESS TOOLS BUTTON
+======================================= -->
+<button id="toolsToggle" class="tools-toggle-d">
+  Wellness Tools ⚡
+</button>
+
+
+<!-- =======================================
+        WELLNESS TOOLS PANEL
+======================================= -->
+<div id="toolsPanel" class="tools-panel">
+
+  <!-- Mood Tracker -->
+<div class="tools-section">
+  <h3>Mood Tracker</h3>
+  <div class="mood-buttons improved">
+    <button class="mood-btn mood-great" data-label="Great">😄 Great</button>
+    <button class="mood-btn mood-good" data-label="Good">😊 Good</button>
+    <button class="mood-btn mood-okay" data-label="Okay">😐 Okay</button>
+    <button class="mood-btn mood-low" data-label="Low">😟 Low</button>
+    <button class="mood-btn mood-verylow" data-label="Very Low">😢 Very Low</button>
+  </div>
+  <div id="moodStatus" class="tool-status">How are you feeling right now?</div>
+</div>
+
+
+  <!-- Notes -->
+  <div class="tools-section">
+    <h3>Quick Notes</h3>
+    <textarea id="journalInput" class="journal-input" placeholder="Write a thought..."></textarea>
+    <button id="saveNoteBtn" class="journal-save">Save Note</button>
+    <button id="clearNotesBtn" class="clear-notes-btn">Clear All Notes</button>
+    <div id="notesList" class="notes-list"></div>
+  </div>
+
+  <!-- Tips -->
+  <div class="tools-section">
+    <h3>Wellness Tip</h3>
+    <div id="tipText">Small progress is still progress.</div>
+  </div>
+
+  <!-- Chart -->
+  <div class="tools-section">
+    <h3>Your Progress</h3>
+    <canvas id="progressChart" width="270" height="150"></canvas>
+  </div>
+
+  <!-- Flashcards -->
+  <div class="tools-section">
+    <h3>Flashcards</h3>
+
+    <div class="flashcard" id="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-front" id="flashFront">Tap Flip to see a calming thought.</div>
+        <div class="flashcard-back" id="flashBack">Your well-being matters.</div>
+      </div>
+    </div>
+
+    <div class="flashcard-controls">
+      <button id="prevCard">Prev</button>
+      <button id="flipCard">Flip</button>
+      <button id="nextCard">Next</button>
+    </div>
+  </div>
+
+  <!-- Relax -->
+  <div class="tools-section">
+    <h3>Relax Mode</h3>
+    <button id="relaxBtn" class="journal-save">Start Breathing Exercise</button>
+  </div>
+
+</div>
+
+
+<!-- =======================================
+        SIDE HISTORY PANEL
+======================================= -->
+<div id="sidePanel" class="side-panel">
+
+  <div class="panel-header">
+    <div id="closePanel" class="panel-dots">⋯</div>
+    <span>Your History</span>
+  </div>
+
+  <div class="history-filters">
+    <button class="history-filter active" data-filter="all">All</button>
+    <button class="history-filter" data-filter="Stress">Stress</button>
+    <button class="history-filter" data-filter="Anxiety">Anxiety</button>
+    <button class="history-filter" data-filter="Depression">Depression</button>
+  </div>
+
+  <button id="clearHistoryBtn" class="clear-btn">Clear History</button>
+
+  <div id="historyList"></div>
+
+</div>
+<!-- RELAX OVERLAY STYLES -->
+<style>
+.relax-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(3px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.relax-overlay.show {
+  display: flex;
+}
+
+.relax-card {
+  width: 300px;
+  background: rgba(255,255,255,0.95);
+  padding: 22px;
+  border-radius: 18px;
+  text-align: center;
+  color: #1a2333;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+}
+
+.breathing-circle {
+  width: 95px;
+  height: 95px;
+  margin: 16px auto;
+  background: rgba(161,196,253,0.7);
+  border-radius: 50%;
+  animation: breathe 4s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.relax-close {
+  margin-top: 12px;
+  padding: 9px 16px;
+  background: #2A5298;
+  color: #fff;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+</style>
+
+
+<!-- RELAX OVERLAY HTML -->
+<div id="relaxOverlay" class="relax-overlay">
+  <div class="relax-card">
+    <h2>Breathing Exercise</h2>
+    <p id="breathText">Breathe in…</p>
+    <div class="breathing-circle"></div>
+    <button id="closeRelax" class="relax-close">Close</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<script>
+AOS.init({ duration: 1000 });
+
+/* ======================================================
+      USER LOGIN + WELCOME
+====================================================== */
+const user = JSON.parse(localStorage.getItem("mindcareUser") || "{}");
+
+if (!user.calledName) {
+  window.location.href = "login.html";
+}
+
+document.getElementById("welcomeUser").textContent =
+  `Welcome back, ${user.calledName}!`;
+
+document.getElementById("profileIcon").textContent =
+  user.calledName.charAt(0).toUpperCase();
+
+document.getElementById("logoutBtn").onclick = () => {
+  localStorage.removeItem("mindcareUser");
+  window.location.href = "login.html";
+};
+
+
+/* ======================================================
+      AFFIRMATION CENTER
+====================================================== */
+const affirmations = [
+  "“Every day you are growing.”",
+  "“Your mind deserves peace.”",
+  "“Healing is not linear.”",
+  "“You are doing better than you think.”",
+  "“Small steps still move you forward.”",
+  "“You are worthy of calm.”"
+];
+
+function showAffirmationCenter() {
+  const pick = affirmations[Math.floor(Math.random() * affirmations.length)];
+  document.getElementById("affirmationCenter").textContent = pick;
+}
+
+showAffirmationCenter();
+setInterval(showAffirmationCenter, 15000);
+
+
+/* ======================================================
+      SIDE PANEL (3 DOTS)
+====================================================== */
+const sidePanel = document.getElementById("sidePanel");
+
+document.getElementById("openPanel").onclick = () => {
+  sidePanel.classList.add("open");
+};
+
+document.getElementById("closePanel").onclick = () => {
+  sidePanel.classList.remove("open");
+};
+
+
+/* ======================================================
+      HISTORY SYSTEM
+====================================================== */
+function loadHistory(filter="all") {
+  const history = JSON.parse(localStorage.getItem("mindcareHistory") || "[]");
+  const list = document.getElementById("historyList");
+
+  list.innerHTML = "";
+
+  const filtered = history.filter(h => filter === "all" || h.type === filter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = "<p>No assessments yet.</p>";
+    return;
+  }
+
+  filtered.reverse().forEach(item => {
+    const div = document.createElement("div");
+    div.className = "history-entry";
+div.innerHTML = `${item.type} — ${new Date(item.time).toLocaleString()}`;
+div.style.cursor = "pointer";
+div.onclick = () => {
+    window.location.href = "profile.html?id=" + item.time;
+};
+
+    list.appendChild(div);
+  });
+}
+
+loadHistory();
+
+/* filter buttons */
+document.querySelectorAll(".history-filter").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".history-filter")
+      .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+    loadHistory(btn.dataset.filter);
+    drawChart();
+  };
+});
+
+/* clear history */
+document.getElementById("clearHistoryBtn").onclick = () => {
+  if (confirm("Delete ALL history?")) {
+    localStorage.removeItem("mindcareHistory");
+    loadHistory();
+    drawChart();
+  }
+};
+
+
+/* ======================================================
+      WELLNESS TOOLS — OPEN/CLOSE
+====================================================== */
+const toolsPanel = document.getElementById("toolsPanel");
+const toolsBtn = document.getElementById("toolsToggle");
+
+/* click button → open panel */
+toolsBtn.onclick = () => {
+  toolsPanel.classList.toggle("open");
+};
+
+/* click outside → close panel */
+document.addEventListener("click", (e) => {
+  if (!toolsPanel.contains(e.target) && !toolsBtn.contains(e.target)) {
+    toolsPanel.classList.remove("open");
+  }
+});
+
+
+/* ======================================================
+      MOOD TRACKER
+====================================================== */
+function updateMood() {
+  const moods = JSON.parse(localStorage.getItem("mindcareMoodHistory") || "[]");
+  const last = moods[moods.length - 1];
+
+  if (!last) {
+    document.getElementById("moodStatus").textContent =
+      "How are you feeling right now?";
+    return;
+  }
+
+  document.getElementById("moodStatus").textContent =
+    `Last mood: ${last.label}`;
+}
+
+updateMood();
+
+document.querySelectorAll(".mood-btn").forEach(btn => {
+  btn.onclick = () => {
+    const arr = JSON.parse(localStorage.getItem("mindcareMoodHistory") || "[]");
+    arr.push({ label: btn.dataset.label, time: Date.now() });
+    localStorage.setItem("mindcareMoodHistory", JSON.stringify(arr));
+    updateMood();
+  };
+});
+
+
+/* ======================================================
+      NOTES (SAVE / DELETE / CLEAR)
+====================================================== */
+function loadNotes() {
+  const notes = JSON.parse(localStorage.getItem("mindcareNotes") || "[]");
+  const list = document.getElementById("notesList");
+
+  list.innerHTML = "";
+
+  if (notes.length === 0) {
+    list.innerHTML = "<p style='opacity:0.7;'>No notes yet.</p>";
+    return;
+  }
+
+  notes.slice().reverse().forEach((note, idx) => {
+    const div = document.createElement("div");
+    div.className = "journal-note";
+
+    const t = document.createElement("span");
+    t.textContent = note.text;
+
+    const del = document.createElement("span");
+    del.textContent = "✖";
+    del.className = "delete-note";
+
+    del.onclick = () => {
+      const originalIndex = notes.length - 1 - idx;
+      notes.splice(originalIndex, 1);
+      localStorage.setItem("mindcareNotes", JSON.stringify(notes));
+      loadNotes();
+    };
+
+    div.appendChild(t);
+    div.appendChild(del);
+    list.appendChild(div);
+  });
+}
+
+loadNotes();
+
+/* save */
+document.getElementById("saveNoteBtn").onclick = () => {
+  const val = document.getElementById("journalInput").value.trim();
+  if (!val) return;
+
+  const notes = JSON.parse(localStorage.getItem("mindcareNotes") || "[]");
+  notes.push({ text: val, time: Date.now() });
+  localStorage.setItem("mindcareNotes", JSON.stringify(notes));
+
+  document.getElementById("journalInput").value = "";
+  loadNotes();
+};
+
+/* clear all */
+document.getElementById("clearNotesBtn").onclick = () => {
+  if (confirm("Delete ALL notes?")) {
+    localStorage.removeItem("mindcareNotes");
+    loadNotes();
+  }
+};
+
+
+/* ======================================================
+      TIPS ROTATION
+====================================================== */
+const tips = [
+  "Drink water and take 3 deep breaths.",
+  "Relax your shoulders and unclench your jaw.",
+  "Small progress counts too.",
+  "Look at something comforting for 5 seconds.",
+  "You are doing better than you think."
+];
+
+let tipIndex = 0;
+
+function rotateTip() {
+  document.getElementById("tipText").textContent = tips[tipIndex];
+  tipIndex = (tipIndex + 1) % tips.length;
+}
+
+rotateTip();
+setInterval(rotateTip, 15000);
+
+
+/* ======================================================
+      PROGRESS CHART
+====================================================== */
+function drawChart() {
+  const ctx = document.getElementById("progressChart").getContext("2d");
+  const hist = JSON.parse(localStorage.getItem("mindcareHistory") || "[]");
+
+  let s=0,a=0,d=0;
+
+  hist.forEach(h => {
+    if (h.type === "Stress") s++;
+    if (h.type === "Anxiety") a++;
+    if (h.type === "Depression") d++;
+  });
+
+  ctx.clearRect(0,0,270,150);
+
+  const vals=[s,a,d];
+  const labels=["Stress","Anxiety","Depression"];
+  const max=Math.max(...vals,1);
+
+  const barW=50, gap=22, base=130;
+
+  labels.forEach((lbl,i)=>{
+    const h=(vals[i]/max)*100;
+    const x=i*(barW+gap)+20;
+    const y=base-h;
+
+    ctx.fillStyle="rgba(255,255,255,0.9)";
+    ctx.fillRect(x,y,barW,h);
+
+    ctx.fillStyle="#fff";
+    ctx.font="12px Nunito";
+    ctx.fillText(lbl,x+5,base+14);
+    ctx.fillText(vals[i],x+barW/2-4,y-6);
+  });
+}
+
+drawChart();
+
+
+/* ======================================================
+      FLASHCARDS
+====================================================== */
+const flashcards = [
+  { front:"Breathe in for 4 seconds.", back:"Exhale for 6 seconds." },
+  { front:"Name one thing you're grateful for.", back:"Gratitude shifts the mind." },
+  { front:"Relax your jaw and shoulders.", back:"Your body holds tension silently." },
+  { front:"Notice 3 things around you.", back:"Grounding reduces anxiety." },
+  { front:"Slow is also progress.", back:"You're doing great." }
+];
+
+let cardIndex = 0;
+
+function renderCard() {
+  document.getElementById("flashFront").textContent = flashcards[cardIndex].front;
+  document.getElementById("flashBack").textContent = flashcards[cardIndex].back;
+  document.getElementById("flashcard").classList.remove("flipped");
+}
+
+renderCard();
+
+/* flip */
+document.getElementById("flipCard").onclick = () => {
+  document.getElementById("flashcard").classList.toggle("flipped");
+};
+
+/* prev */
+document.getElementById("prevCard").onclick = () => {
+  cardIndex = (cardIndex - 1 + flashcards.length) % flashcards.length;
+  renderCard();
+};
+
+/* next */
+document.getElementById("nextCard").onclick = () => {
+  cardIndex = (cardIndex + 1) % flashcards.length;
+  renderCard();
+};
+
+
+/* ======================================================
+      RELAX MODE
+====================================================== */
+let relaxLoop;
+let step = 0;
+
+function relaxPhase() {
+  const phases=["Breathe in…","Hold…","Exhale slowly…"];
+  document.getElementById("breathText").textContent = phases[step];
+  step = (step + 1) % phases.length;
+}
+
+document.getElementById("relaxBtn").onclick = () => {
+  document.getElementById("relaxOverlay").classList.add("show");
+  step = 0;
+  relaxPhase();
+  relaxLoop = setInterval(relaxPhase, 4000);
+};
+
+document.getElementById("closeRelax").onclick = () => {
+  document.getElementById("relaxOverlay").classList.remove("show");
+  clearInterval(relaxLoop);
+};
+// close side history panel when clicking outside
+document.addEventListener("click", (e) => {
+    if (!sidePanel.contains(e.target) &&
+        !document.getElementById("openPanel").contains(e.target)) {
+        sidePanel.classList.remove("open");
+    }
+});
+
+
+/* ======================================================
+      STREAK SYSTEM
+====================================================== */
+
+// load streak from localStorage
+let streak = parseInt(localStorage.getItem("mindcareStreak") || "0");
+
+// ensure streak is shown
+document.getElementById("streakTooltip").textContent = `${streak}-day streak`;
+
+
+
+</script>
+
+</body>
+</html>

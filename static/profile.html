@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MindCare | Profile</title>
+<link rel="icon" type="image/x-icon" href="favi.ico">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Fredericka+the+Great&display=swap');
+/* ========================= GLOBAL BG ========================= */
+body {
+  margin: 0;
+ font-family: 'Comfortaa', sans-serif;
+  color: #fff;
+  background: linear-gradient(120deg, #305497, #2a5298);
+  background-size: 200% 200%;
+  animation: bgFlow 18s ease infinite;
+  overflow-x: hidden;
+}
+
+@keyframes bgFlow {
+  0% { background-position: 0 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("pic20.jpeg") no-repeat center center/cover;
+  opacity: 0.28;
+  z-index: 0;
+}
+
+/* ====================== TOP NAV ====================== */
+.topbar {
+  width: 92%;
+  max-width: 1200px;
+  margin: 25px auto 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+
+
+/* Keep logo and icon perfectly aligned */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Fix oversized favicon image */
+.logo-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+.upload-btn {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.logo {
+  font-size: 1.7rem;
+  font-weight: 900;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-right a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.dots {
+  font-size: 28px;
+  cursor: pointer;
+  opacity: 0.95;
+  user-select: none;
+}
+
+/* ====================== SETTINGS PANEL ====================== */
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 330px;
+  height: 100vh;
+  background: rgba(255,255,255,0.23);
+  backdrop-filter: blur(22px);
+  padding: 24px;
+  transition: 0.35s;
+  z-index: 2000;
+  color: #fff;
+  overflow-y: auto;
+  transform: translateX(100%);
+  pointer-events: none; /* prevents blocking clicks */
+  opacity: 0;
+}
+
+/* When OPEN */
+.settings-panel.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto; /* interactive when open */
+}
+
+
+.settings-panel.open {
+  right: 0;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.settings-header .panel-dots {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,0.25);
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-weight: 900;
+}
+
+/* Input fields */
+.settings-item input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255,255,255,0.85);
+  margin-top: 6px;
+}
+
+/* Buttons */
+.settings-item button {
+  width: 100%;
+  padding: 10px;
+    text-align: center;
+  margin-top: 8px;
+  border-radius: 14px;
+  border: 2px solid #2a5298;
+  background: transparent;
+  color: #2a5298;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.settings-item button:hover {
+  background: #2a5298;
+  color: #fff;
+}
+
+/* Danger buttons (still blue theme, not red) */
+.settings-danger {
+  border-color: #1d3d74 !important;
+}
+.settings-danger:hover {
+  background: #1d3d74 !important;
+  color: #fff !important;
+}
+
+/* ====================== MAIN CONTENT ====================== */
+.container {
+  width: 92%;
+  max-width: 1200px;
+  margin: 130px auto 50px;
+  position: relative;
+  z-index: 10;
+}
+
+.section {
+  background: rgba(255,255,255,0.20);
+  backdrop-filter: blur(18px);
+  padding: 25px;
+  border-radius: 22px;
+  margin-bottom: 35px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.section h2 {
+  margin-top: 0;
+  font-size: 1.7rem;
+  font-weight: 900;
+}
+
+/* ================== REPORT LIST ================== */
+.report-item {
+  background: rgba(255,255,255,0.25);
+  padding: 12px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  color: #1a2333;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.report-item:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+/* FULL REPORT AREA */
+#fullReportSection { display: none; white-space: pre-line; }
+
+/* PROFILE PIC PREVIEW */
+#profilePicPreview {
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  margin-bottom: 10px;
+}
+
+/* Custom Upload Button (Option 3 - outline) */
+.upload-btn {
+  padding: 10px 15px;
+  border: 2px solid #fff;
+  border-radius: 14px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  transition: 0.3s;
+}
+
+.upload-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+#fileName {
+  font-size: 0.85rem;
+  margin-top: 6px;
+  color: #fff;
+  opacity: 0.85;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =================== TOPBAR =================== -->
+<div class="topbar">
+<div class="logo">
+  <img src="favi.ico" alt="logo" class="logo-icon">
+  MindCare
+</div>
+
+
+  <div class="nav-right">
+    <a href="/static/dashboard.html">Dashboard</a>
+  <div id="openSettings" class="dots">⋯</div>
+
+
+  </div>
+</div>
+
+<!-- =================== SETTINGS PANEL =================== -->
+<div id="settingsPanel" class="settings-panel">
+
+  <div class="settings-header">
+    <div id="closePanel" class="panel-dots">⋯</div>
+    <h2>Settings</h2>
+  </div>
+
+  <!-- Display Name -->
+  <div class="settings-item">
+    <label >Display Name</label>
+    <input id="displayName" />
+    <button onclick="saveDisplayName()">Save Name</button>
+  </div>
+
+  <!-- Profile Picture -->
+  <div class="settings-item">
+    <label>Profile Picture</label>
+   <div style="text-align:center;">
+ <div style="text-align:center;">
+  <img id="profilePicPreview">
+</div>
+
+</div>
+
+
+<div style="display:flex; justify-content:center; width:100%;">
+<div style="display:flex; justify-content:center; width:100%;">
+  <label class="upload-btn" for="profilePic">Upload Photo</label>
+</div>
+
+</div>
+
+    <input type="file" id="profilePic" accept="image/*" style="display:none;">
+   
+
+    <button onclick="removeProfilePic()" class="settings-danger">Remove Picture</button>
+  </div>
+
+  <!-- CLEAR DATA -->
+  <div class="settings-item">
+    <h3>Data Controls</h3>
+    <button class="settings-danger" onclick="clearHistory()">Clear Assessment History</button>
+    <button class="settings-danger" onclick="clearGratitude()">Clear Gratitude Jar</button>
+    <button class="settings-danger" onclick="clearMood()">Clear Mood Data</button>
+  </div>
+
+  <!-- LOGOUT -->
+  <div class="settings-item">
+    <button class="settings-danger" onclick="logout()">Logout</button>
+  </div>
+
+</div>
+
+<!-- =================== MAIN CONTENT =================== -->
+<div class="container">
+
+  <!-- STREAK & DAILY CHALLENGE -->
+  <div class="section">
+    <h2>Daily Wellness</h2>
+    <p><strong>Streak:</strong> <span id="streakCount">0</span> days</p>
+    <p><strong>Today's Challenge:</strong></p>
+    <div id="challengeBox"></div>
+  </div>
+
+  <!-- GRATITUDE -->
+  <div class="section">
+    <h2>Gratitude Jar</h2>
+    <textarea id="gratitudeInput" placeholder="Add something you're grateful for..." style="width:100%;padding:10px;border-radius:12px;"></textarea>
+    <button onclick="addGratitude()" style="margin-top:10px;">Add</button>
+    <div id="gratitudeList" style="margin-top:10px;color:#1a2333;"></div>
+  </div>
+
+  <!-- ASSESSMENT HISTORY -->
+  <div class="section">
+    <h2>Your Assessments</h2>
+    <canvas id="stressChart" height="120" style="margin-bottom: 25px;"></canvas>
+    <canvas id="anxietyChart" height="120" style="margin-bottom: 25px;"></canvas>
+    <canvas id="depressionChart" height="120" style="margin-bottom: 25px;"></canvas>
+    <div id="reportList"></div>
+  </div>
+
+  <!-- FULL REPORT -->
+  <div class="section" id="fullReportSection">
+    <h2>Full Report</h2>
+    <div id="fullReport"></div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init({ duration: 1000 });
+
+/* ========= SETTINGS PANEL ========= */
+const panel = document.getElementById("settingsPanel");
+document.getElementById("openSettings").onclick = () => panel.classList.add("open");
+document.getElementById("closePanel").onclick = () => panel.classList.remove("open");
+
+/* ========= USER INFO ========= */
+let user = JSON.parse(localStorage.getItem("mindcareUser") || "{}");
+document.getElementById("displayName").value = user.calledName || "";
+
+/* Save display name */
+function saveDisplayName() {
+  user.calledName = displayName.value.trim();
+  localStorage.setItem("mindcareUser", JSON.stringify(user));
+  alert("Name updated!");
+}
+
+/* ========= PROFILE PIC ========= */
+const preview = document.getElementById("profilePicPreview");
+const savedPic = localStorage.getItem("mindcareProfilePic");
+
+function generateFallbackPic() {
+  const initial = (user.calledName?.charAt(0) || "U").toUpperCase();
+  preview.style.background = "linear-gradient(135deg,#2a5298,#305497)";
+  preview.style.display = "flex";
+  preview.style.justifyContent = "center";
+  preview.style.alignItems = "center";
+  preview.style.fontSize = "2.2rem";
+  preview.style.color = "#fff";
+  preview.src = "";
+  preview.textContent = initial;
+}
+
+if (savedPic) {
+  preview.src = savedPic;
+  preview.style.background = "none";
+  preview.textContent = "";
+} else {
+  generateFallbackPic();
+}
+
+/* Custom Upload UI */
+document.getElementById("profilePic").addEventListener("change", () => {
+  const file = profilePic.files[0];
+  if (!file) return;
+
+  document.getElementById("fileName").textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    preview.src = reader.result;
+    preview.style.background = "none";
+    preview.textContent = "";
+    localStorage.setItem("mindcareProfilePic", reader.result);
+  };
+  reader.readAsDataURL(file);
+});
+
+/* Remove Profile Pic */
+function removeProfilePic() {
+  localStorage.removeItem("mindcareProfilePic");
+  generateFallbackPic();
+  alert("Profile picture removed.");
+}
+
+/* ========= GRATITUDE ========= */
+function loadGratitude() {
+  const arr = JSON.parse(localStorage.getItem("mindcareGratitude") || "[]");
+  gratitudeList.innerHTML = "";
+  arr.forEach(g => {
+    const div = document.createElement("div");
+    div.textContent = "• " + g;
+    gratitudeList.appendChild(div);
+  });
+}
+loadGratitude();
+
+function addGratitude() {
+  const val = gratitudeInput.value.trim();
+  if (!val) return;
+  const arr = JSON.parse(localStorage.getItem("mindcareGratitude") || "[]");
+  arr.push(val);
+  localStorage.setItem("mindcareGratitude", JSON.stringify(arr));
+  gratitudeInput.value = "";
+  loadGratitude();
+}
+
+function clearGratitude() {
+  localStorage.removeItem("mindcareGratitude");
+  loadGratitude();
+  alert("Gratitude jar cleared.");
+}
+
+/* ========= HISTORY ========= */
+async function loadReports() {
+    const userData = JSON.parse(localStorage.getItem("mindcareUser") || "{}");
+    const userId = userData?.user_id;
+
+    if (!userId) {
+        reportList.innerHTML = "<p>Error: user not logged in.</p>";
+        return;
+    }
+
+    const res = await fetch(`http://localhost:5000/get_assessments/${userId}`);
+    const data = await res.json();
+
+    if (!data.history || data.history.length === 0) {
+        reportList.innerHTML = "<p>No assessments yet.</p>";
+        return;
+    }
+
+    reportList.innerHTML = "";
+
+    data.history.forEach((h) => {
+        const div = document.createElement("div");
+        div.classList.add("report-item");
+
+        div.textContent =
+            `Stress: ${h.stress_prediction_ml} | Score: ${h.stress_score_pss} — ` +
+            `${new Date(h.timestamp).toLocaleString()}`;
+
+        div.onclick = () => loadFullReport(h);
+        reportList.appendChild(div);
+    });
+
+    renderCharts(data.history);
+}
+loadReports();
+function renderCharts(history) {
+    history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    const dates = history.map(h =>
+        new Date(h.timestamp).toLocaleDateString()
+    );
+
+    // Extract scores only (NO ML levels)
+    const stressScore = history.map(h => h.stress_score_pss);
+    const anxietyScore = history.map(h => h.anxiety_score_gad);
+    const depressionScore = history.map(h => h.depression_score_phq);
+    Chart.defaults.color = "#ffffff";              // axis labels white
+    Chart.defaults.borderColor = "rgba(255,255,255,0.25)";  // grid lines soft white
+    Chart.defaults.font.size = 14;
+    Chart.defaults.plugins.legend.labels.color = "#ffffff";
+
+    /* ---------------------- STRESS ---------------------- */
+    new Chart(document.getElementById("stressChart"), {
+        type: "line",
+        data: {
+            labels: dates,
+            datasets: [{
+                label: "Stress",
+                data: stressScore,
+                borderWidth: 3,
+                borderColor: "rgba(0, 182, 255, 1)",   // bright blue
+                backgroundColor: "rgba(0, 182, 255, 0.3)",
+                pointBackgroundColor: "rgba(0, 182, 255, 1)"
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 30,
+                    ticks: { color: "#ffffff" }
+                },
+                x: {
+                    ticks: { color: "#ffffff" }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById("anxietyChart"), {
+        type: "line",
+        data: {
+            labels: dates,
+            datasets: [{
+                label: "Anxiety",
+                data: anxietyScore,
+                borderWidth: 3,
+                borderColor: "rgba(255, 99, 132, 1)",     // red
+                backgroundColor: "rgba(255, 99, 132, 0.3)",
+                pointBackgroundColor: "rgba(255, 99, 132, 1)"
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { min: 0, max: 20, ticks: { color: "#ffffff" } },
+                x: { ticks: { color: "#ffffff" } }
+            }
+        }
+    });
+
+    new Chart(document.getElementById("depressionChart"), {
+        type: "line",
+        data: {
+            labels: dates,
+            datasets: [{
+                label: "Depression",
+                data: depressionScore,
+                borderWidth: 3,
+                borderColor: "rgba(255, 206, 86, 1)",      // yellow
+                backgroundColor: "rgba(255, 206, 86, 0.3)",
+                pointBackgroundColor: "rgba(255, 206, 86, 1)"
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { min: 0, max: 20, ticks: { color: "#ffffff" } },
+                x: { ticks: { color: "#ffffff" } }
+            }
+        }
+    });
+}
+function clearHistory() {
+  localStorage.removeItem("mindcareHistory");
+  loadReports();
+  alert("History cleared.");
+}
+
+/* ========= FULL REPORT ========= */
+function loadFullReport(report) {
+
+  fullReportSection.style.display = "block";
+
+  // 📌 Labels for display
+  const labels = {
+    anxiety_prediction_ml: "Anxiety Level",
+    anxiety_score_gad: "Anxiety Score (GAD-7)",
+    depression_prediction_ml: "Depression Level",
+    depression_score_phq: "Depression Score (PHQ-9)",
+    stress_prediction_ml: "Stress Level",
+    stress_score_pss: "Stress Score (PSS-10)",
+    timestamp: "Date & Time"
+  };
+
+  // 📌 Formatting JSON manually but replacing keys with labels
+  let formatted = "{\n";
+  for (const key in report) {
+    const label = labels[key] || key;   // fallback if missing
+    formatted += `    "${label}": ${JSON.stringify(report[key])},\n`;
+  }
+  formatted += "}";
+
+  // 📌 Keep your original style exactly the same
+  fullReport.innerHTML = `
+      <pre style="
+          background: rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(10px);
+          border-radius: 16px;
+          padding: 20px;
+          font-size: 1.1rem;
+          color: white;
+          white-space: pre-wrap;
+          font-family: 'Courier New', monospace;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      ">
+${formatted}
+      </pre>
+  `;
+}
+/* ========= MOOD ========= */
+function clearMood() {
+  localStorage.removeItem("mindcareMoodHistory");
+  alert("Mood data cleared.");
+}
+
+/* ========= DAY CHALLENGE ========= */
+document.getElementById("challengeBox").textContent = [
+  "Write 3 things you're grateful for",
+  "Take a deep breathing break",
+  "Drink a glass of water",
+  "Go for a 5-minute walk"
+][Math.floor(Math.random() * 4)];
+
+/* ========= LOGOUT ========= */
+function logout() {
+  localStorage.removeItem("mindcareUser");
+  window.location.href = "login.html";
+}
+
+document.addEventListener("click", (e) => {
+  const panel = document.getElementById("settingsPanel");
+  const openBtn = document.getElementById("openSettings");
+
+  // if clicking outside panel and not clicking the open button
+  if (!panel.contains(e.target) && e.target !== openBtn) {
+    panel.classList.remove("open");
+  }
+});
+
+</script>
+
+</body>
+</html>

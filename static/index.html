@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindCare</title>
+<link rel="icon" type="image/x-icon" href="/static/favi.ico">
+
+<!-- AOS (Animate On Scroll) -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Fredericka+the+Great&display=swap');
+  body {
+    margin: 0;
+    font-family: 'Comfortaa', sans-serif;
+    color: #fff;
+    height: 100%;
+    overflow-x: hidden;
+    position: relative;
+
+    /* Moving gradient + background image 
+    background: linear-gradient(120deg, #1E3C72, #2A5298);*/
+    background: linear-gradient(120deg, #305497, #2A5298);
+    background-size: 200% 200%;
+    animation: gradientFlow 15s ease infinite;
+  }
+
+  @keyframes gradientFlow {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Background image FIXED with opacity */
+  body::before {
+    content: '';
+    background: url('/static/pic20.jpeg') no-repeat center center/cover;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.35;
+  }
+
+  /* ============================================================
+      FLOATING TOP BAR (REPLACES NAVBAR)
+  ============================================================ */
+ /* Floating Top Text (WITHOUT rectangular background) */
+.top-floating {
+    position: fixed;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1100px;
+
+    /* Removed background box */
+    background: none;
+    border-radius: 0;
+    backdrop-filter: none;
+    box-shadow: none;
+    padding: 0px;
+
+    z-index: 999;
+}
+
+/* Fix favicon size next to MindCare */
+.logo-icon {
+  width: 42px;     /* nicely balanced */
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-block;
+}
+
+  .top-floating .logo {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  .top-floating .nav-links {
+    display: flex;
+    gap: 15px;
+  }
+
+  .top-floating .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 8px 12px;
+    transition: 0.3s ease;
+  }
+
+  .top-floating .nav-links a:hover {
+    color: #A1C4FD;
+  }
+
+  .top-floating .signup-btn {
+    background: #A1C4FD;
+    color: #2C3E50;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: 0.3s ease;
+  }
+
+  .top-floating .signup-btn:hover {
+    background: #ffffff;
+  }
+
+  /* Cursor */
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: soft-light;
+    transition: transform 0.1s ease-out, width 0.2s, height 0.2s;
+    z-index: 999;
+  }
+
+  a, button {
+    cursor: none;
+  }
+
+  /* Cursor hover effect */
+  a:hover ~ .cursor,
+  button:hover ~ .cursor {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Hero Section */
+  header {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding: 0 20px;
+  }
+
+  header h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+  }
+
+  header p {
+    max-width: 450px;
+    line-height: 1.6;
+    opacity: 0.9;
+    margin-bottom: 20px;
+  }
+
+  header button {
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 25px;
+    font-size: 1rem;
+    color: #2C3E50;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+  }
+
+  header button:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 1);
+  }
+
+  header .tagline {
+    margin-top: 10px;
+    font-size: 1.1rem;
+    opacity: 0.8;
+  }
+
+  /* Sections */
+  section {
+    padding: 100px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+  }
+
+  section p {
+    max-width: 500px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* Step Cards */
+  .steps-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .step-card {
+     background: #284a82;
+    padding: 25px;
+    border-radius: 20px;
+    max-width: 250px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s, background 0.3s;
+  }
+
+  .step-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.25);
+  }
+
+  .step-card h3 {
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+  }
+
+  .step-card p {
+    font-size: 0.95rem;
+    color: #f0f0f0;
+  }
+
+  /* About Section */
+  .about-box {
+    
+    background: #284a82;
+   
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 700px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    color: #f0f0f0;
+    line-height: 1.6;
+    margin-top: 30px;
+  }
+
+  /* Particle Canvas */
+  #particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  /* Responsive */
+  @media(max-width:768px){
+    .steps-container{
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor"></div>
+
+<!-- TOP FLOATING (Mind Care + Login + Sign Up) -->
+<div class="top-floating">
+    <div class="logo">
+      <img src="/static/favi.ico" alt="logo" class="logo-icon">
+      <span class="logo-text">MindCare</span>
+  </div>
+  <div class="nav-links">
+    <a href="/static/login.html" class="login-link">Login</a>
+    <a href="/static/signup.html" class="signup-btn">Sign Up</a>
+  </div>
+</div>
+
+<!-- Hero Section -->
+<header data-aos="fade-up">
+  <h1>Find Your Inner Calm</h1>
+  <p>Discover if you're experiencing Stress, Anxiety, or Depression. Our guided assessment is designed to be simple, safe, and soothing.<br><br>Check. Understand. Improve  </p>
+  <button onclick="window.location.href='/static/login.html'"> Start Assessment</button>
+
+ 
+</header>
+
+<!-- Why Choose Section -->
+<section data-aos="fade-up">
+  <h2>Why Choose MindCare?</h2>
+  <p>A compassionate and science-based way to check in with yourself.</p>
+</section>
+
+<!-- Steps Section -->
+<section data-aos="fade-up">
+  <h2>How It Works</h2>
+  <div class="steps-container">
+    <div class="step-card" data-aos="fade-up" data-aos-delay="100">
+      <h3>Step 1: Reflect</h3>
+      <p>Answer mindful questions designed to understand your state.</p>
+    </div>
+    <div class="step-card" data-aos="fade-up" data-aos-delay="200">
+      <h3>Step 2: Understand</h3>
+      <p>Receive insights about stress, anxiety, and depression levels.</p>
+    </div>
+    <div class="step-card" data-aos="fade-up" data-aos-delay="300">
+      <h3>Step 3: Grow</h3>
+      <p>Explore tips and tools to support your mental wellness journey.</p>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section data-aos="fade-up">
+  <h2>MindCare – Your Personal Mental Health Companion</h2>
+  <div class="about-box">
+    <p>
+      MindCare is designed to help you understand and manage your mental well-being. By answering a few simple questions, MindCare evaluates your stress, anxiety, and depression levels and provides personalized recommendations to improve your mental health. Our goal is to create awareness, encourage self-care, and support you in taking small but meaningful steps toward a healthier mind.
+    </p>
+    <p style="margin-top:10px; font-weight:bold;">Your mind matters, take care of it.</p>
+  </div>
+</section>
+
+<!-- Particle Canvas -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 1000, once: true });
+
+  // Cursor
+  const cursor = document.querySelector('.cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+  });
+
+  // Particle Canvas
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let particlesArray = [];
+  const colors = ['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.15)', 'rgba(255,255,255,0.1)'];
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles(120);
+  });
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 3 + 1;
+      this.speedY = Math.random() * 0.5 + 0.2;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+    update() {
+      this.y -= this.speedY;
+      if (this.y < 0) this.y = canvas.height;
+    }
+    draw() {
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function initParticles(num = 120) {
+    particlesArray = [];
+    for (let i = 0; i < num; i++) {
+      particlesArray.push(new Particle());
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particlesArray.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+  }
+
+  initParticles();
+  animateParticles();
+</script>
+
+</body>
+</html>

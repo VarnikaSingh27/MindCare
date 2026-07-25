@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare - Anxiety Assessment</title>
+    <meta name="description" content="A gentle, supportive space for anxiety self-assessment">
+    <link rel="icon" type="image/x-icon" href="favi.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 210 40% 98%;
+            --foreground: 215 25% 27%;
+            --primary: 210 80% 48%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 200 70% 92%;
+            --muted-foreground: 215 16% 47%;
+            --border: 210 30% 88%;
+            --calm-blue-light: 210 70% 85%;
+            --calm-peach: 20 90% 85%;
+            --calm-purple: 250 60% 70%;
+            --glass-bg: hsla(0, 0%, 100%, 0.7);
+            --glass-border: hsla(210, 30%, 88%, 0.3);
+        }
+
+        body {
+            font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, hsl(var(--calm-blue-light)) 0%, hsl(var(--background)) 50%, hsl(var(--calm-peach)) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            color: hsl(var(--foreground));
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-decoration-1 {
+            top: 5rem;
+            left: 5rem;
+            width: 16rem;
+            height: 16rem;
+            background: hsla(210, 80%, 48%, 0.05);
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .bg-decoration-2 {
+            bottom: 5rem;
+            right: 5rem;
+            width: 24rem;
+            height: 24rem;
+            background: hsla(250, 60%, 70%, 0.1);
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 42rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .progress-text {
+            color: hsla(215, 25%, 27%, 0.7);
+        }
+
+        .progress-percent {
+            color: hsl(var(--primary));
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 0.5rem;
+            background: hsl(var(--secondary));
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: hsl(var(--primary));
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px -10px hsla(210, 80%, 48%, 0.15);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.animating {
+            opacity: 0;
+            transform: scale(0.98);
+        }
+
+        .question-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .question-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+            color: hsl(var(--foreground));
+        }
+
+        .question-description {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 36rem;
+            margin: 0 auto;
+        }
+
+        .input-container {
+            padding: 1rem 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.25rem;
+            text-align: center;
+            border: 1px solid hsla(210, 80%, 48%, 0.2);
+            border-radius: 0.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: hsl(var(--foreground));
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 2px hsla(210, 80%, 48%, 0.1);
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1.125rem;
+            border: 1px solid hsla(210, 80%, 48%, 0.2);
+            border-radius: 0.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .select-field:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 2px hsla(210, 80%, 48%, 0.1);
+        }
+
+        .slider-container {
+            width: 100%;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0 0.25rem;
+        }
+
+        .slider-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: hsl(var(--primary));
+        }
+
+        .slider-min, .slider-max {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .slider-input {
+            width: 100%;
+            height: 0.5rem;
+            -webkit-appearance: none;
+            appearance: none;
+            background: hsl(var(--secondary));
+            border-radius: 9999px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            background: hsl(var(--primary));
+            border: 2px solid hsl(var(--background));
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .slider-input::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .slider-input::-moz-range-thumb {
+            width: 1.25rem;
+            height: 1.25rem;
+            background: hsl(var(--primary));
+            border: 2px solid hsl(var(--background));
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .slider-input::-moz-range-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .yesno-group {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .yesno-btn {
+            min-width: 120px;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+            border: 2px solid hsla(210, 80%, 48%, 0.2);
+            border-radius: 0.75rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .yesno-btn:hover {
+            border-color: hsla(210, 80%, 48%, 0.4);
+            background: hsla(210, 80%, 48%, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .yesno-btn.selected {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+        }
+
+        .gad7-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .gad7-option {
+            width: 100%;
+        }
+
+        .gad7-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .gad7-label {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border: 2px solid hsla(210, 80%, 48%, 0.2);
+            border-radius: 0.75rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .gad7-label:hover {
+            border-color: hsla(210, 80%, 48%, 0.4);
+            background: hsla(210, 80%, 48%, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px -2px hsla(210, 80%, 48%, 0.15);
+        }
+
+        .gad7-input:checked + .gad7-label {
+            border-color: hsl(var(--primary));
+            background: hsla(210, 80%, 48%, 0.1);
+            box-shadow: 0 4px 16px -4px hsla(210, 80%, 48%, 0.3);
+        }
+
+        .gad7-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2rem;
+            height: 2rem;
+            background: hsl(var(--secondary));
+            color: hsl(var(--primary));
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .gad7-input:checked + .gad7-label .gad7-score {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .gad7-text {
+            flex: 1;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Nunito', sans-serif;
+            border: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid hsla(210, 80%, 48%, 0.2);
+            color: hsl(var(--foreground));
+        }
+
+        .btn-back:hover:not(:disabled) {
+            border-color: hsla(210, 80%, 48%, 0.4);
+        }
+
+        .btn-next {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: hsla(210, 80%, 48%, 0.9);
+        }
+
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .transition-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--calm-purple)));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px hsla(210, 80%, 48%, 0.3);
+        }
+
+        #results {
+        display: none;
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: rgba(255,255,255,0.9);
+        border-radius: 12px;
+        }
+        #shap-img { max-width: 100%; border-radius: 8px; margin-top: 0.5rem; }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 2rem;
+            }
+
+            .question-title {
+                font-size: 1.5rem;
+            }
+
+            .question-description {
+                font-size: 1rem;
+            }
+        }
+        .loader-hourglass {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0,0,0,0.15);
+            border-top-color: hsl(var(--primary));
+            border-radius: 50%;
+            animation: spin 0.9s infinite linear;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<div id="loading-overlay"
+     style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(6px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+     ">
+     
+    <div style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
+        
+        <!-- 🔹 ANIMATED HOURGLASS -->
+        <div class="loader-hourglass"></div>
+
+        <div style="
+            background: white;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+            text-align:center;
+        ">
+            Analyzing your results... please wait 💙
+        </div>
+
+    </div>
+</div>
+<body>
+    <div class="bg-decoration bg-decoration-1"></div>
+    <div class="bg-decoration bg-decoration-2"></div>
+
+    <div class="container" id="question-container">
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-text" id="progress-text">Question 1 of 24</span>
+                <span class="progress-percent" id="progress-percent">4%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar" style="width: 4%"></div>
+            </div>
+        </div>
+
+        <div class="card" id="flash-card">
+            <div class="question-header">
+                <h2 class="question-title" id="question-title">Loading...</h2>
+                <p class="question-description" id="question-description">Please wait...</p>
+            </div>
+
+            <div class="input-container" id="input-container">
+                <!-- Dynamic input will be inserted here -->
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="btn btn-back" id="btn-back" onclick="handleBack()" disabled>
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back
+            </button>
+
+            <button class="btn btn-next" id="btn-next" onclick="handleNext()" disabled>
+                <span id="btn-text">Next</span>
+                <svg class="icon" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Results panel appended at the end of container -->
+    <div id="results">
+        <h3>Assessment Results</h3>
+        <p id="pred-text"></p>
+        <p id="prob-text"></p>
+        <p id="pss-text"></p>
+        <h4>Summary</h4>
+        <p id="summary-text"></p>
+        <h4>Recommendations</h4>
+        <ul id="rec-list"></ul>
+        <h4>SHAP Explanation</h4>
+        <img id="shap-img" src="" alt="SHAP waterfall" />
+        <!-- Go to Dashboard Button -->
+        <div style="text-align:center; margin-top: 2rem;">
+            <button 
+                onclick="goToDashboard()" 
+                style="
+                    padding: 12px 22px;
+                    border-radius: 14px;
+                    border: none;
+                    background: hsl(var(--primary));
+                    color: white;
+                    font-weight: 700;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    transition: 0.25s;
+                "
+                onmouseover="this.style.background='hsla(210,80%,48%,0.85)'"
+                onmouseout="this.style.background='hsl(var(--primary))'"
+            >
+                Go to Dashboard →
+            </button>
+        </div>
+    </div>
+    <script>
+        function goToDashboard() {
+            window.location.href = "/static/dashboard.html";
+        }
+        const questions = [
+            {
+                id: "intro",
+                q: "Let's start with some basic questions about you",
+                d: "These initial questions help us understand your background and daily habits. This information provides important context for your assessment.",
+                type: "transition",
+            },
+            {
+                id: "age",
+                q: "How old are you?",
+                d: "Understanding your age helps us provide age-appropriate support and context for your experience.",
+                type: "number",
+                min: 13,
+                max: 120,
+            },
+            {
+                id: "gender",
+                q: "How do you identify?",
+                d: "This helps us understand your unique perspective and lived experiences.",
+                type: "select",
+                options: ["Male", "Female", "Other"],
+            },
+            {
+                id: "occupation",
+                q: "What describes your current work or study?",
+                d: "Your daily activities and environment can deeply influence stress patterns and well-being.",
+                type: "select",
+                options: ["Student", "Engineer", "Teacher", "Doctor", "Nurse", "Artist", "Scientist", "Lawyer", "Musician", "Chef", "Athlete", "Freelancer", "Other"],
+            },
+            {
+                id: "sleep",
+                q: "How many hours do you typically sleep each night?",
+                d: "Sleep quality is deeply connected to emotional regulation and anxiety levels.",
+                type: "slider",
+                min: 0,
+                max: 12,
+                unit: "hours",
+            },
+            {
+                id: "exercise",
+                q: "How many hours per week do you engage in physical activity?",
+                d: "Movement helps release tension, clear your mind, and naturally supports mental health.",
+                type: "slider",
+                min: 0,
+                max: 20,
+                unit: "hours/week",
+            },
+            {
+                id: "caffeine",
+                q: "About how much caffeine do you consume daily?",
+                d: "Caffeine can amplify anxious feelings and affect how your body responds to stress.",
+                type: "slider",
+                min: 0,
+                max: 500,
+                unit: "mg/day",
+            },
+            {
+                id: "alcohol",
+                q: "How many alcoholic drinks do you have per week?",
+                d: "Alcohol can influence mood regulation, sleep quality, and anxiety patterns over time.",
+                type: "number",
+                min: 0,
+                max: 50,
+            },
+            {
+                id: "smoking",
+                q: "Do you currently smoke?",
+                d: "Smoking can affect your nervous system and influence how you experience anxiety.",
+                type: "yesno",
+            },
+            {
+                id: "family_history",
+                q: "Does anyone in your immediate family experience anxiety?",
+                d: "Family history can provide valuable insight into your own mental health journey and patterns.",
+                type: "yesno",
+            },
+            {
+                id: "stress",
+                q: "On a scale of 1-10, how would you rate your current stress level?",
+                d: "Understanding your stress helps us see how you're managing day-to-day challenges right now.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "heart_rate",
+                q: "What's your typical resting heart rate?",
+                d: "Your heart rate can be a helpful indicator of how your body physically responds to anxiety.",
+                type: "number",
+                min: 40,
+                max: 200,
+                unit: "bpm",
+            },
+            {
+                id: "breathing",
+                q: "How many breaths do you take per minute when relaxed?",
+                d: "Breathing patterns can reveal how your body naturally responds to stress and calm.",
+                type: "number",
+                min: 8,
+                max: 30,
+                unit: "breaths/min",
+            },
+            {
+                id: "sweating",
+                q: "How much sweating do you usually experience during anxiety or stressful situations?",
+                d: "Sweating can be a physical response to anxiety. Understanding this helps us see how your body reacts under stress.",
+                type: "slider",
+                min: 1,
+                max: 5,
+                unit: "level",
+            },
+            {
+                id: "dizziness",
+                q: "Do you experience dizziness or lightheadedness?",
+                d: "These physical sensations can be connected to anxiety and how you're breathing in tense moments.",
+                type: "yesno",
+            },
+            {
+                id: "medication",
+                q: "Are you currently taking any medication for anxiety?",
+                d: "Knowing about medication helps us understand your current treatment and support journey.",
+                type: "yesno",
+            },
+            {
+                id: "therapy",
+                q: "How many therapy sessions do you attend per month?",
+                d: "Regular therapy can be a powerful, compassionate tool for managing and understanding anxiety.",
+                type: "number",
+                min: 0,
+                max: 20,
+            },
+            {
+                id: "life_event",
+                q: "Have you experienced a major life change recently?",
+                d: "Significant life events can naturally trigger or intensify feelings of anxiety and overwhelm.",
+                type: "yesno",
+            },
+            {
+                id: "diet",
+                q: "How would you rate the overall quality of your diet?",
+                d: "What we eat plays an important role in our mental clarity, energy, and emotional balance.",
+                type: "slider",
+                min: 1,
+                max: 10,
+            },
+            {
+                id: "transition_gad",
+                q: "Moving to the next stage: GAD-7 Assessment",
+                d: "Now we'll explore your recent anxiety symptoms with a series of clinical questions. This standardized assessment helps us better understand your experience over the past two weeks.",
+                type: "transition",
+            },
+            {
+                id: "gad1",
+                q: "Over the last 2 weeks, how often have you been feeling nervous, anxious, or on edge?",
+                d: "These feelings are common, and recognizing them is the first step toward understanding your experience.",
+                type: "gad7",
+            },
+            {
+                id: "gad2",
+                q: "How often have you found it difficult to stop or control worrying?",
+                d: "Racing thoughts can feel exhausting. You're not alone in this experience.",
+                type: "gad7",
+            },
+            {
+                id: "gad3",
+                q: "How often have you been worrying too much about different things?",
+                d: "When worries feel overwhelming, it's a sign to be gentle with yourself and seek support.",
+                type: "gad7",
+            },
+            {
+                id: "gad4",
+                q: "How often have you had trouble relaxing?",
+                d: "Difficulty unwinding is a natural response to stress, and it's okay to need help finding calm.",
+                type: "gad7",
+            },
+            {
+                id: "gad5",
+                q: "How often have you been so restless that it's hard to sit still?",
+                d: "Restlessness can be your body's way of expressing inner tension. It's a valid signal.",
+                type: "gad7",
+            },
+            {
+                id: "gad6",
+                q: "How often have you become easily annoyed or irritable?",
+                d: "Irritability often reflects deeper feelings. Recognizing this pattern is a strength.",
+                type: "gad7",
+            },
+            {
+                id: "gad7",
+                q: "How often have you felt afraid, as if something awful might happen?",
+                d: "This sense of dread can be deeply unsettling. Know that help and hope are available.",
+                type: "gad7",
+            },
+        ];
+
+        let currentIndex = 0;
+        let answers = {};
+        let isAnimating = false;
+
+        function renderQuestion() {
+            const question = questions[currentIndex];
+            
+            document.getElementById('question-title').textContent = question.q;
+            document.getElementById('question-description').textContent = question.d;
+            
+            updateProgress();
+            renderInput(question);
+            updateButtons();
+        }
+
+        function renderInput(question) {
+            const container = document.getElementById('input-container');
+            const value = answers[question.id];
+            let html = '';
+
+            switch (question.type) {
+                case 'transition':
+                    html = `
+                        <div style="text-align: center; padding: 2rem 0;">
+                            <div class="transition-icon">
+                                <svg style="width: 40px; height: 40px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <p style="color: hsl(var(--primary)); font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Ready to continue?</p>
+                            <p style="color: hsl(var(--muted-foreground)); font-size: 0.95rem;">Click Next when you're ready to proceed</p>
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+                
+                case 'yesno':
+                    html = `
+                        <div class="yesno-group">
+                            <button class="yesno-btn ${value === 'Yes' ? 'selected' : ''}" onclick="handleYesNo('Yes')">Yes</button>
+                            <button class="yesno-btn ${value === 'No' ? 'selected' : ''}" onclick="handleYesNo('No')">No</button>
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+
+                case 'select':
+                    html = `
+                        <select class="select-field" onchange="updateAnswer(this.value)">
+                            <option value="">Select an option...</option>
+                            ${question.options.map(opt => 
+                                `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`
+                            ).join('')}
+                        </select>
+                    `;
+                    container.innerHTML = html;
+                    break;
+
+                case 'slider':
+                    const sliderValue = value !== undefined ? value : question.min;
+                    html = `
+                        <div class="slider-container">
+                            <div class="slider-labels">
+                                <span class="slider-min">${question.min}</span>
+                                <span class="slider-value" id="slider-value">${sliderValue}${question.unit ? ' ' + question.unit : ''}</span>
+                                <span class="slider-max">${question.max}</span>
+                            </div>
+                            <input type="range" class="slider-input" 
+                                min="${question.min}" 
+                                max="${question.max}" 
+                                value="${sliderValue}"
+                                step="1"
+                                oninput="updateSliderValue(this.value, '${question.unit || ''}')"
+                                onchange="updateAnswer(parseInt(this.value))">
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    if (value === undefined) updateAnswer(sliderValue);
+                    break;
+
+                case 'number':
+                    html = `
+                        <div style="width: 100%;">
+                            <input type="number" class="input-field" 
+                                placeholder="Enter a number..." 
+                                min="${question.min || ''}" 
+                                max="${question.max || ''}"
+                                value="${value || ''}"
+                                oninput="updateAnswer(this.value ? parseInt(this.value) : undefined)">
+                            ${question.unit ? `<p style="text-align: center; margin-top: 0.5rem; font-size: 0.875rem; color: hsl(var(--muted-foreground));">${question.unit}</p>` : ''}
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+
+                case 'gad7':
+                    const gad7Options = [
+                        { value: 0, label: 'Not at all' },
+                        { value: 1, label: 'Several days' },
+                        { value: 2, label: 'More than half the days' },
+                        { value: 3, label: 'Nearly every day' }
+                    ];
+                    html = `
+                        <div class="gad7-group">
+                            ${gad7Options.map((opt, idx) => `
+                                <div class="gad7-option">
+                                    <input type="radio" id="gad7_${idx}" name="gad7" value="${opt.value}" class="gad7-input" 
+                                        ${value === opt.value ? 'checked' : ''} onchange="updateAnswer(${opt.value})">
+                                    <label for="gad7_${idx}" class="gad7-label">
+                                        <span class="gad7-score">${opt.value}</span>
+                                        <span class="gad7-text">${opt.label}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+            }
+        }
+
+        function updateSliderValue(value, unit) {
+            document.getElementById('slider-value').textContent = value + (unit ? ' ' + unit : '');
+        }
+
+        function handleYesNo(value) {
+            updateAnswer(value);
+            const buttons = document.querySelectorAll('.yesno-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === value) {
+                    btn.classList.add('selected');
+                }
+            });
+        }
+
+        function updateAnswer(value) {
+            const question = questions[currentIndex];
+            answers[question.id] = value;
+            updateButtons();
+        }
+
+        function updateProgress() {
+            const progress = ((currentIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-text').textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+            document.getElementById('progress-percent').textContent = `${Math.round(progress)}%`;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function updateButtons() {
+            const question = questions[currentIndex];
+            const hasAnswer = answers[question.id] !== undefined && answers[question.id] !== '';
+            const isLastQuestion = currentIndex === questions.length - 1;
+
+            document.getElementById('btn-back').disabled = currentIndex === 0 || isAnimating;
+            document.getElementById('btn-next').disabled = (!hasAnswer && question.type !== 'transition') || isAnimating;
+
+            if (isLastQuestion) {
+                document.getElementById('btn-text').textContent = 'Complete';
+                document.getElementById('btn-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+            } else {
+                document.getElementById('btn-text').textContent = 'Next';
+                document.getElementById('btn-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>';
+            }
+        }
+
+        function handleNext() {
+            if (isAnimating) return;
+            
+            if (currentIndex < questions.length - 1) {
+                animateTransition(() => {
+                    currentIndex++;
+                    renderQuestion();
+                });
+            } else {
+                console.log('Assessment complete:', answers);
+                submitAssessment();
+            }
+        }
+
+        function handleBack() {
+            if (currentIndex > 0 && !isAnimating) {
+                animateTransition(() => {
+                    currentIndex--;
+                    renderQuestion();
+                });
+            }
+        }
+
+        function animateTransition(callback) {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            const card = document.getElementById('flash-card');
+            card.classList.add('animating');
+            
+            setTimeout(() => {
+                callback();
+                card.classList.remove('animating');
+                isAnimating = false;
+            }, 200);
+        }
+
+        async function submitAssessment() {
+
+            const payload = {
+                ml_features: {
+                    "Age": answers.age,
+                    "Gender": answers.gender,
+                    "Occupation": answers.occupation,
+                    "Sleep Hours": answers.sleep,
+                    "Physical Activity (hrs/week)": answers.exercise,
+                    "Caffeine Intake (mg/day)": answers.caffeine,
+                    "Alcohol Consumption (drinks/week)": answers.alcohol,
+                    "Smoking": answers.smoking,
+                    "Family History of Anxiety": answers.family_history,
+                    "Stress Level (1-10)": answers.stress,
+                    "Heart Rate (bpm)": answers.heart_rate,
+                    "Breathing Rate (breaths/min)": answers.breathing,
+                    "Sweating Level (1-5)": answers.sweating,   // default required
+                    "Dizziness": answers.dizziness,
+                    "Medication": answers.medication,
+                    "Therapy Sessions (per month)": answers.therapy,
+                    "Recent Major Life Event": answers.life_event,
+                    "Diet Quality (1-10)": answers.diet
+                },
+
+                gad_answers: [
+                    answers.gad1,
+                    answers.gad2,
+                    answers.gad3,
+                    answers.gad4,
+                    answers.gad5,
+                    answers.gad6,
+                    answers.gad7
+                ]
+            };
+            // 🔹 Show loading screen
+            document.getElementById("loading-overlay").style.display = "flex";
+
+            try {
+                const resp = await fetch("/api/anxiety/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await resp.json();
+                // 🔹 Hide loader
+                document.getElementById("loading-overlay").style.display = "none";
+                if (data.error) {
+                    alert("Error: " + data.error);
+                    return;
+                }
+                // 🔹 Hide questions and show results
+                document.getElementById("question-container").style.display = "none";
+                document.getElementById("results").style.display = "block";
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                //document.getElementById('results').style.display = 'block';
+                document.getElementById("pred-text").innerText = "Predicted Anxiety Level: " + data.prediction;
+                document.getElementById("prob-text").innerText = "Probabilities: " + JSON.stringify(data.probabilities);
+                document.getElementById("pss-text").innerText = "GAD-7 Score: " + data.gad_total + " (" + data.gad_level + ")";
+                document.getElementById("summary-text").innerText = data.summary_report;
+
+                const recList = document.getElementById("rec-list");
+                recList.innerHTML = "";
+                data.recommendations.forEach(r => {
+                    recList.innerHTML += `<li>${r}</li>`;
+                });
+
+                document.getElementById("shap-img").src = "data:image/png;base64," + data.shap_image_base64;
+
+            } catch (err) {
+                console.error(err);
+                 // 🔹 Make sure loader hides even on error
+                document.getElementById("loading-overlay").style.display = "none";
+                alert("Server error, check console.");
+            }
+        }
+
+        // Initialize
+        renderQuestion();
+    </script>
+</body>
+</html>

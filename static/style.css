@@ -1,0 +1,175 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Body & Background - horizontally duplicated and seamless */
+body {
+  height: 100vh;
+  background: url('pic_1.jpg') repeat-x center center fixed;
+  background-size: auto 100%; /* full height, width auto for horizontal repetition */
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Optional: Soft horizontal blend if edges are not seamless */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Navbar */
+nav {
+  width: 90%;
+  margin: 20px auto;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 12px 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 5;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: white;
+  transition: color 0.3s;
+  font-size: 0.9rem;
+}
+
+.nav-links a:hover {
+  color: #10b981;
+}
+
+.nav-links .btn {
+  padding: 5px 14px;
+  background-color: #10b981;
+  color: white;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.nav-links .btn:hover {
+  background-color: #0f9d73;
+}
+
+.nav-links .signup {
+  background-color: #3b82f6;
+}
+
+.nav-links .signup:hover {
+  background-color: #2563eb;
+}
+
+/* Hero Section */
+.hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Clouds */
+.clouds {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: 2;
+}
+
+.cloud {
+  position: absolute;
+  border-radius: 50px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* Transparent PNG, no background color */
+}
+
+/* Far cloud - slowest */
+.cloud.far {
+  width: 120px;
+  height: 50px;
+  top: 20px;
+  left: -150px;
+  background-image: url('pic_2.png');
+  animation: moveCloudsFar 180s linear infinite;
+  opacity: 0.6;
+}
+
+/* Medium cloud - medium speed */
+.cloud.medium {
+  width: 180px;
+  height: 60px;
+  top: 50px;
+  left: -200px;
+  background-image: url('pic_3.png');
+  animation: moveCloudsMedium 120s linear infinite;
+}
+
+/* Near cloud - fastest */
+.cloud.near {
+  width: 220px;
+  height: 70px;
+  top: 80px;
+  left: -250px;
+  background-image: url('pic_4.png');
+  animation: moveCloudsNear 90s linear infinite;
+  opacity: 0.9;
+}
+
+/* Cloud Animations */
+@keyframes moveCloudsFar {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(120vw); }
+}
+
+@keyframes moveCloudsMedium {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(120vw); }
+}
+
+@keyframes moveCloudsNear {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(120vw); }
+}
+
+/* Hero Text */
+.hero-text {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 3; /* above clouds */
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+/* Navbar Logo */
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}

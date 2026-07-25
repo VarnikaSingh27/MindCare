@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare - Stress Assessment</title>
+    <meta name="description" content="A gentle, supportive space for stress self-assessment">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favi.ico">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 210 40% 98%;
+            --foreground: 215 25% 27%;
+            --primary: 210 80% 48%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 200 70% 92%;
+            --muted-foreground: 215 16% 47%;
+            --border: 210 30% 88%;
+            --calm-blue-light: 210 70% 85%;
+            --calm-peach: 20 90% 85%;
+            --calm-purple: 250 60% 70%;
+            --glass-bg: hsla(0, 0%, 100%, 0.7);
+            --glass-border: hsla(210, 30%, 88%, 0.3);
+        }
+
+        body {
+            font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, hsl(var(--calm-blue-light)) 0%, hsl(var(--background)) 50%, hsl(var(--calm-peach)) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            color: hsl(var(--foreground));
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-decoration-1 {
+            top: 5rem;
+            left: 5rem;
+            width: 16rem;
+            height: 16rem;
+            background: hsla(210, 80%, 48%, 0.05);
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .bg-decoration-2 {
+            bottom: 5rem;
+            right: 5rem;
+            width: 24rem;
+            height: 24rem;
+            background: hsla(250, 60%, 70%, 0.1);
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 42rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .progress-text {
+            color: hsla(215, 25%, 27%, 0.7);
+        }
+
+        .progress-percent {
+            color: hsl(var(--primary));
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 0.5rem;
+            background: hsl(var(--secondary));
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: hsl(var(--primary));
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px -10px hsla(210, 80%, 48%, 0.15);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.animating {
+            opacity: 0;
+            transform: scale(0.98);
+        }
+
+        .question-header {
+            margin-bottom: 2rem;
+        }
+
+        .question-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .question-description {
+            font-size: 1.0625rem;
+            color: hsl(var(--muted-foreground));
+            line-height: 1.6;
+        }
+
+        .input-container {
+            margin-bottom: 2rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            font-size: 1rem;
+            font-family: 'Nunito', sans-serif;
+            border: 2px solid hsl(var(--border));
+            border-radius: 0.75rem;
+            background: hsla(0, 0%, 100%, 0.8);
+            color: hsl(var(--foreground));
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsla(210, 80%, 48%, 0.1);
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            font-size: 1rem;
+            font-family: 'Nunito', sans-serif;
+            border: 2px solid hsl(var(--border));
+            border-radius: 0.75rem;
+            background: hsla(0, 0%, 100%, 0.8);
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .select-field:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsla(210, 80%, 48%, 0.1);
+        }
+
+        .slider-container {
+            padding: 1rem 0;
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: hsl(var(--primary));
+            margin-bottom: 1.5rem;
+        }
+
+        .slider {
+            width: 100%;
+            height: 0.5rem;
+            border-radius: 9999px;
+            background: hsl(var(--secondary));
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            background: hsl(var(--primary));
+            cursor: pointer;
+            box-shadow: 0 2px 8px hsla(210, 80%, 48%, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px hsla(210, 80%, 48%, 0.5);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            background: hsl(var(--primary));
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px hsla(210, 80%, 48%, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px hsla(210, 80%, 48%, 0.5);
+        }
+
+        .yesno-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .yesno-btn {
+            flex: 1;
+            padding: 1rem;
+            font-size: 1.0625rem;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+            border: 2px solid hsl(var(--border));
+            border-radius: 0.75rem;
+            background: hsla(0, 0%, 100%, 0.6);
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .yesno-btn:hover {
+            border-color: hsl(var(--primary));
+            background: hsla(0, 0%, 100%, 0.9);
+        }
+
+        .yesno-btn.selected {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+        }
+
+        .pss-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .pss-option {
+            position: relative;
+        }
+
+        .pss-input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .pss-label {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border: 2px solid hsl(var(--border));
+            border-radius: 0.75rem;
+            background: hsla(0, 0%, 100%, 0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pss-label:hover {
+            border-color: hsl(var(--primary));
+            background: hsla(0, 0%, 100%, 0.9);
+        }
+
+        .pss-input:checked + .pss-label {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+        }
+
+        .pss-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.5rem;
+            height: 2.5rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            border-radius: 0.5rem;
+            background: hsla(210, 80%, 48%, 0.1);
+        }
+
+        .pss-input:checked + .pss-label .pss-score {
+            background: hsla(0, 0%, 100%, 0.25);
+        }
+
+        .pss-text {
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid hsla(210, 80%, 48%, 0.2);
+            color: hsl(var(--foreground));
+        }
+
+        .btn-back:hover:not(:disabled) {
+            border-color: hsla(210, 80%, 48%, 0.4);
+        }
+
+        .btn-next {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: hsla(210, 80%, 48%, 0.9);
+        }
+
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 2rem;
+            }
+
+            .question-title {
+                font-size: 1.5rem;
+            }
+
+            .question-description {
+                font-size: 1rem;
+            }
+        }
+        #results {
+        display: none;
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: rgba(255,255,255,0.9);
+        border-radius: 12px;
+        }
+        #shap-img { max-width: 100%; border-radius: 8px; margin-top: 0.5rem; }
+        .loader-hourglass {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0,0,0,0.15);
+            border-top-color: hsl(var(--primary));
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<div id="loading-overlay"
+     style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(6px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+     ">
+     
+    <div style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
+        
+        <!-- 🔹 ANIMATED HOURGLASS -->
+        <div class="loader-hourglass"></div>
+
+        <div style="
+            background: white;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+            text-align:center;
+        ">
+            Analyzing your results... please wait 💙
+        </div>
+
+    </div>
+</div>
+<body>
+    <div class="bg-decoration bg-decoration-1"></div>
+    <div class="bg-decoration bg-decoration-2"></div>
+
+    <div class="container" id="question-container">
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-text" id="progress-text">Question 1 of 30</span>
+                <span class="progress-percent" id="progress-percent">3%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar" style="width: 3%"></div>
+            </div>
+        </div>
+
+        <div class="card" id="flash-card">
+            <div class="question-header">
+                <h2 class="question-title" id="question-title">Loading...</h2>
+                <p class="question-description" id="question-description">Please wait...</p>
+            </div>
+
+            <div class="input-container" id="input-container">
+                <!-- Dynamic input will be inserted here -->
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="btn btn-back" id="btn-back" onclick="handleBack()" disabled>
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back
+            </button>
+
+            <button class="btn btn-next" id="btn-next" onclick="handleNext()" disabled>
+                <span id="btn-text">Next</span>
+                <svg class="icon" id="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Results panel appended at the end of container -->
+    <div id="results">
+        <h3>Assessment Results</h3>
+        <p id="pred-text"></p>
+        <p id="prob-text"></p>
+        <p id="pss-text"></p>
+        <h4>Summary</h4>
+        <p id="summary-text"></p>
+        <h4>Recommendations</h4>
+        <ul id="rec-list"></ul>
+        <h4>SHAP Explanation</h4>
+        <div id="shap-chart" style="width: 100%; height: 500px;"></div>
+
+        <!-- Where advice appears -->
+        <div id="shap-advice" 
+            style="margin-top: 1rem; font-size:1.1rem; font-weight:600; color:#2a3c6b;">
+        </div>
+        <!-- Go to Dashboard Button -->
+        <div style="text-align:center; margin-top: 2rem;">
+            <button 
+                onclick="goToDashboard()" 
+                style="
+                    padding: 12px 22px;
+                    border-radius: 14px;
+                    border: none;
+                    background: hsl(var(--primary));
+                    color: white;
+                    font-weight: 700;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    transition: 0.25s;
+                "
+                onmouseover="this.style.background='hsla(210,80%,48%,0.85)'"
+                onmouseout="this.style.background='hsl(var(--primary))'"
+            >
+                Go to Dashboard →
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function goToDashboard() {
+            window.location.href = "/static/dashboard.html";
+        }
+        const questions = [
+            {
+                id: "intro",
+                q: "Let's start with some basic questions about you",
+                d: "These initial questions help us understand your lifestyle and daily habits. This information provides important context for your stress assessment.",
+                type: "transition",
+            },
+            {
+                id: "age",
+                q: "What is your age?",
+                d: "Age helps us understand different life stages and their unique stressors.",
+                type: "number",
+                min: 10,
+                max: 120,
+            },
+            {
+                id: "gender",
+                q: "What is your gender?",
+                d: "This helps us provide more personalized insights about stress patterns.",
+                type: "select",
+                options: ["Male", "Female"],
+            },
+            {
+                id: "marital_status",
+                q: "What is your marital status?",
+                d: "Relationship status can influence stress levels and support systems.",
+                type: "select",
+                options: ["Single", "Married", "Divorced"],
+            },
+            {
+                id: "sleep_duration",
+                q: "How many hours do you sleep per night?",
+                d: "Sleep is crucial for managing stress and maintaining emotional balance.",
+                type: "slider",
+                min: 0,
+                max: 12,
+                unit: "hours",
+            },
+            {
+                id: "sleep_quality",
+                q: "How would you rate your sleep quality?",
+                d: "Quality of sleep is just as important as quantity for stress management.",
+                type: "slider",
+                min: 1,
+                max: 10,
+                unit: "",
+            },
+            {
+                id: "physical_activity",
+                q: "How many days per week do you exercise?",
+                d: "Regular exercise is a powerful tool for reducing stress and improving mood.",
+                type: "slider",
+                min: 0,
+                max: 7,
+                unit: "days/week",
+            },
+            {
+                id: "screen_time",
+                q: "How many hours per day is your screen time?",
+                d: "Excessive screen time can contribute to stress and affect mental well-being.",
+                type: "slider",
+                min: 0,
+                max: 16,
+                unit: "hrs/day",
+            },
+            {
+                id: "caffeine",
+                q: "How many cups of caffeine do you drink daily?",
+                d: "Caffeine intake can affect stress levels and sleep quality.",
+                type: "slider",
+                min: 0,
+                max: 10,
+                unit: "cups/day",
+            },
+            {
+                id: "alcohol",
+                q: "How many alcoholic drinks do you consume per week?",
+                d: "Alcohol consumption patterns can impact stress and overall mental health.",
+                type: "slider",
+                min: 0,
+                max: 50,
+                unit: "drinks/week",
+            },
+            {
+                id: "smoking",
+                q: "Do you smoke?",
+                d: "Smoking can affect how your body responds to stress.",
+                type: "yesno",
+            },
+            {
+                id: "work_hours",
+                q: "How many hours do you work per week?",
+                d: "Work hours directly impact stress levels and work-life balance.",
+                type: "number",
+                min: 0,
+                max: 100,
+            },
+            {
+                id: "travel_time",
+                q: "How many hours per day do you travel or commute?",
+                d: "Long commutes can add significant stress to your daily routine.",
+                type: "slider",
+                min: 0,
+                max: 6,
+                unit: "hrs/day",
+            },
+            {
+                id: "social_events",
+                q: "How many social events do you attend per week?",
+                d: "Social connections can help buffer against stress, but balance is key.",
+                type: "slider",
+                min: 0,
+                max: 14,
+                unit: "events/week",
+            },
+            {
+                id: "meditation",
+                q: "Do you practice meditation?",
+                d: "Meditation is a proven technique for managing stress and promoting calm.",
+                type: "yesno",
+            },
+            {
+                id: "exercise_type",
+                q: "What type of exercise do you prefer?",
+                d: "Different types of exercise offer unique benefits for stress management.",
+                type: "select",
+                options: ["Yoga", "Cardio", "Strength Training", "Pilates", "Aerobics", "Meditation", "Walking"],
+            },
+            {
+                id: "blood_pressure",
+                q: "What is your blood pressure?",
+                d: "Blood pressure can be an indicator of stress impact on your physical health. (Normal Systolic : Less than 120 mmHg)",
+                type: "number",
+                min: 70,
+                max: 200,
+                unit: "mmHg",
+            },
+            {
+                id: "cholesterol",
+                q: "What is your cholesterol level?",
+                d: "Cholesterol levels can be influenced by chronic stress. (Normal Cholesterol : Less than 200 mg/dL)",
+                type: "number",
+                min: 100,
+                max: 400,
+                unit: "mg/dL",
+            },
+            {
+                id: "blood_sugar",
+                q: "What is your blood sugar level?",
+                d: "Stress can affect blood sugar regulation and metabolic health. (Normal Fasting Blood Sugar : Less than 100 mg/dL)",
+                type: "number",
+                min: 60,
+                max: 400,
+                unit: "mg/dL",
+            },
+            {
+                id: "transition_pss",
+                q: "Moving to the next stage: PSS-10 Assessment",
+                d: "Now we'll explore your stress levels with the Perceived Stress Scale (PSS-10). These questions help measure how unpredictable, uncontrollable, and overloaded you find your life.",
+                type: "transition",
+            },
+            // PSS-10 Questions
+            {
+                id: "pss1",
+                q: "In the last month, how often have you been upset because of something that happened unexpectedly?",
+                d: "Unexpected events can disrupt our sense of control and create stress.",
+                type: "pss",
+            },
+            {
+                id: "pss2",
+                q: "In the last month, how often have you felt that you were unable to control the important things in your life?",
+                d: "Feeling a lack of control over important aspects of life is a key indicator of stress.",
+                type: "pss",
+            },
+            {
+                id: "pss3",
+                q: "In the last month, how often have you felt nervous and stressed?",
+                d: "Persistent nervousness and stress can significantly impact daily functioning.",
+                type: "pss",
+            },
+            {
+                id: "pss4",
+                q: "In the last month, how often have you felt confident about your ability to handle your personal problems?",
+                d: "Confidence in handling problems reflects resilience and coping capacity.",
+                type: "pss",
+            },
+            {
+                id: "pss5",
+                q: "In the last month, how often have you felt that things were going your way?",
+                d: "Feeling things are going well indicates positive stress management.",
+                type: "pss",
+            },
+            {
+                id: "pss6",
+                q: "In the last month, how often have you found that you could not cope with all the things that you had to do?",
+                d: "Feeling overwhelmed by tasks is a common sign of high stress levels.",
+                type: "pss",
+            },
+            {
+                id: "pss7",
+                q: "In the last month, how often have you been able to control irritations in your life?",
+                d: "Managing irritations shows emotional regulation and stress control.",
+                type: "pss",
+            },
+            {
+                id: "pss8",
+                q: "In the last month, how often have you felt that you were on top of things?",
+                d: "Feeling in control and on top of things reflects good stress management.",
+                type: "pss",
+            },
+            {
+                id: "pss9",
+                q: "In the last month, how often have you been angered because of things that happened that were outside of your control?",
+                d: "Anger from uncontrollable events can indicate difficulty managing stress.",
+                type: "pss",
+            },
+            {
+                id: "pss10",
+                q: "In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?",
+                d: "Feeling overwhelmed by accumulating difficulties is a strong stress indicator.",
+                type: "pss",
+            },
+        ];
+
+        let currentIndex = 0;
+        let answers = {};
+        let isAnimating = false;
+
+        function renderQuestion() {
+            const question = questions[currentIndex];
+            
+            document.getElementById('question-title').textContent = question.q;
+            document.getElementById('question-description').textContent = question.d;
+            
+            updateProgress();
+            renderInput(question);
+            updateButtons();
+        }
+
+        function renderInput(question) {
+            const container = document.getElementById('input-container');
+            const value = answers[question.id];
+            let html = '';
+
+            switch (question.type) {
+                case 'transition':
+                    html = `
+                        <div style="text-align: center; padding: 2rem 0;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--calm-purple))); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px hsla(210, 80%, 48%, 0.3);">
+                                <svg style="width: 40px; height: 40px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <p style="color: hsl(var(--primary)); font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Ready to continue?</p>
+                            <p style="color: hsl(var(--muted-foreground)); font-size: 0.95rem;">Click Next when you're ready to proceed</p>
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    document.getElementById('btn-next').disabled = false;
+                    break;
+                
+                case 'number':
+                    html = `<input type="number" class="input-field" id="input" 
+                            min="${question.min}" max="${question.max}" 
+                            value="${value || ''}" 
+                            placeholder="Enter ${question.unit || 'number'}"
+                            oninput="handleInput(this.value)">`;
+                    container.innerHTML = html;
+                    break;
+
+                case 'select':
+                    html = `<select class="select-field" id="input" onchange="handleInput(this.value)">
+                            <option value="">Choose an option</option>
+                            ${question.options.map(opt => 
+                                `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`
+                            ).join('')}
+                        </select>`;
+                    container.innerHTML = html;
+                    break;
+
+                case 'slider':
+                    const sliderValue =
+                        (value !== undefined && value !== null && value !== "") ? Number(value) : question.min;
+
+                    html = `
+                        <div class="slider-container">
+                            <div class="slider-value" id="slider-value">${sliderValue} ${question.unit || ''}</div>
+                            <input type="range" class="slider" id="input"
+                                min="${question.min}"
+                                max="${question.max}"
+                                value="${sliderValue}"
+                                oninput="updateSlider(Number(this.value), '${question.unit || ''}')">
+                        </div>
+                    `;
+                    container.innerHTML = html;
+
+                    // always save value (even 0)
+                    handleInput(sliderValue);
+
+                    break;
+
+                case 'yesno':
+                    html = `
+                        <div class="yesno-group">
+                            <button class="yesno-btn ${value === 'Yes' ? 'selected' : ''}" 
+                                    onclick="handleYesNo('Yes')">Yes</button>
+                            <button class="yesno-btn ${value === 'No' ? 'selected' : ''}" 
+                                    onclick="handleYesNo('No')">No</button>
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+
+                case 'pss':
+                    const options = [
+                        { value: 0, label: 'Never' },
+                        { value: 1, label: 'Almost Never' },
+                        { value: 2, label: 'Sometimes' },
+                        { value: 3, label: 'Fairly Often' },
+                        { value: 4, label: 'Very Often' }
+                    ];
+                    html = `
+                        <div class="pss-group">
+                            ${options.map(opt => `
+                                <div class="pss-option">
+                                    <input type="radio" class="pss-input" name="pss" id="pss${opt.value}" 
+                                           value="${opt.value}" ${value == opt.value ? 'checked' : ''}
+                                           onchange="handleInput(${opt.value})">
+                                    <label class="pss-label" for="pss${opt.value}">
+                                        <div class="pss-score">${opt.value}</div>
+                                        <div class="pss-text">${opt.label}</div>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    container.innerHTML = html;
+                    break;
+            }
+        }
+
+        function updateSlider(value, unit) {
+            value = Number(value);
+            document.getElementById('slider-value').textContent = `${value} ${unit}`;
+            handleInput(value);
+        }
+
+        function handleYesNo(value) {
+            handleInput(value);
+            
+            const buttons = document.querySelectorAll('.yesno-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === value) {
+                    btn.classList.add('selected');
+                }
+            });
+        }
+
+        function handleInput(value) {
+            const question = questions[currentIndex];
+            answers[question.id] = value;
+            updateButtons();
+        }
+
+        function updateButtons() {
+            const question = questions[currentIndex];
+            const hasAnswer = answers[question.id] !== undefined && answers[question.id] !== '';
+            
+            document.getElementById('btn-back').disabled = currentIndex === 0 || isAnimating;
+            document.getElementById('btn-next').disabled = (!hasAnswer && question.type !== 'transition') || isAnimating;
+            
+            if (currentIndex === questions.length - 1) {
+                document.getElementById('btn-text').textContent = 'Submit';
+            } else {
+                document.getElementById('btn-text').textContent = 'Next';
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+            document.getElementById('progress-percent').textContent = `${Math.round(progress)}%`;
+        }
+
+        function animateCard(callback) {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            const card = document.getElementById('flash-card');
+            card.classList.add('animating');
+            
+            setTimeout(() => {
+                callback();
+                card.classList.remove('animating');
+                isAnimating = false;
+
+                updateButtons();   // <-- VERY IMPORTANT
+            }, 300);
+        }
+
+        function mapToMLFeatures(answers) {
+        // Map frontend answer keys to ML expected keys (PascalCase)
+        return {
+            Age: answers.age,
+            Gender: answers.gender,
+            Marital_Status: answers.marital_status,
+            Sleep_Duration: answers.sleep_duration,
+            Sleep_Quality: answers.sleep_quality,
+            Physical_Activity: answers.physical_activity,
+            Screen_Time: answers.screen_time,
+            Caffeine_Intake: answers.caffeine,
+            Alcohol_Intake: answers.alcohol,
+            Smoking_Habit: answers.smoking,
+            Work_Hours: answers.work_hours,
+            Travel_Time: answers.travel_time,
+            Social_Interactions: answers.social_events,
+            Meditation_Practice: answers.meditation,
+            Exercise_Type: answers.exercise_type,
+            Blood_Pressure: answers.blood_pressure,
+            Cholesterol_Level: answers.cholesterol,
+            Blood_Sugar_Level: answers.blood_sugar
+        };
+        }
+
+        function collectPSSAnswers(answers) {
+        // pss1..pss10 expected in the same order
+        return [
+            parseInt(answers.pss1 || 0),
+            parseInt(answers.pss2 || 0),
+            parseInt(answers.pss3 || 0),
+            parseInt(answers.pss4 || 0),
+            parseInt(answers.pss5 || 0),
+            parseInt(answers.pss6 || 0),
+            parseInt(answers.pss7 || 0),
+            parseInt(answers.pss8 || 0),
+            parseInt(answers.pss9 || 0),
+            parseInt(answers.pss10 || 0)
+        ];
+        }
+
+        async function submitAssessment() {
+            const user = JSON.parse(localStorage.getItem("mindcareUser"));
+            const payload = {
+                user_id: user.user_id,
+                email: user.email,
+                ml_features: mapToMLFeatures(answers),
+                pss_answers: collectPSSAnswers(answers)
+            };
+
+            // Show loader
+            document.getElementById("loading-overlay").style.display = "flex";
+
+            try {
+                const resp = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await resp.json();
+
+                // Hide loader
+                document.getElementById("loading-overlay").style.display = "none";
+
+                // Hide questions and show results
+                document.querySelector(".container").style.display = "none";
+                const resultDiv = document.getElementById("results");
+                resultDiv.style.display = "block";
+
+                // Fill results UI
+                document.getElementById("pred-text").textContent = `Predicted stress: ${data.prediction}`;
+                // document.getElementById("prob-text").textContent = `Probabilities: ${data.probabilities.join(', ')}`;
+                document.getElementById("pss-text").textContent = `PSS score: ${data.pss_score} → ${data.pss_level}`;
+                document.getElementById("summary-text").textContent = data.summary_report;
+
+                // 🔹 ADD RECOMMENDATIONS HERE
+                const recList = document.getElementById("rec-list");
+                recList.innerHTML = "";
+                (data.recommendations || []).forEach(r => {
+                    const li = document.createElement("li");
+                    li.textContent = r;
+                    recList.appendChild(li);
+                });
+
+                // 🔥 Add SHAP waterfall
+                // 🔥 Render interactive SHAP
+                if (data.shap_interactive) {
+                    const shapJSON = typeof data.shap_interactive === "string"
+                        ? JSON.parse(data.shap_interactive)
+                        : data.shap_interactive;
+
+                    Plotly.newPlot("shap-chart", shapJSON);
+
+                    document.getElementById("shap-chart")
+                    ?.on('plotly_click', function(event){
+                        let feature = event.points[0].y;
+                        let impact = event.points[0].x;
+                        let value = event.points[0].customdata.match(/User value: ([^<]+)/)?.[1] || "N/A";
+
+                        document.getElementById("shap-advice").innerHTML = `
+                            Your <b>${feature}</b> is <b>${value}</b>, 
+                            which <b>${impact > 0 ? "increases" : "reduces"}</b> stress.<br><br>
+                            <span style="color:#3A4BA0">${adviceMap[feature] || "No advice available yet."}</span>
+                        `;
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById("loading-overlay").style.display = "none";
+                alert("Server error, check console.");
+            }
+        }
+        function handleNext() {
+            if (isAnimating) return;
+            
+            if (currentIndex < questions.length - 1) {
+                animateCard(() => {
+                    currentIndex++;
+                    renderQuestion();
+                });
+            } else {
+                console.log('Assessment completed!', answers);
+                submitAssessment(answers);
+            }
+        }
+
+        function handleBack() {
+            if (isAnimating || currentIndex === 0) return;
+            
+            animateCard(() => {
+                currentIndex--;
+                renderQuestion();
+            });
+        }
+
+        // Initialize
+        renderQuestion();
+    </script>
+</body>
+</html>
